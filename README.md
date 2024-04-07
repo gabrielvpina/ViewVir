@@ -1,3 +1,8 @@
+# Fontes dos dados - ICTV
+
+- Virus Metadata Resource (VMR)
+- Master Species Lists (MSL)
+- 
 # Processando os dados do diamond
 
 ## Query basica:
@@ -27,21 +32,21 @@ full_qseq - Full query sequence
 
 QuerySeq	SubjectSeq	QseqLength	SseqLength	Pident	Evalue	SubjTitle	FullQueryLength
 
-# 1) Filtro 
+### 1) Filtro 
 
 `grep -i 'RdRp\|RNA-dependent\|capsid\|coat\|replicase\|glycoprotein\|replicase\|nucleoprotein\|nucleocapsid' arquivo.tsv > arquivoFiltrado.tsv`
 
-# 2) Inserindo nova coluna
+### 2) Inserindo nova coluna
 
 - Transformando os colchetes em tabs
 - Inserção de nova coluna
 
 QuerySeq	SubjectSeq	QseqLength	SseqLength	Pident	Evalue	bitscore	SubjTitle	Specie	FullQueryLength
 
-# 3) Substituindo os Colchetes por espaços tabulados
+### 3) Substituindo os Colchetes por espaços tabulados
 
 `sed -i 's/\[/\t/g; s/\]/\t/g' arquivo.tsv`
 
-# 4) Inserindo colunas na tabela
+### 4) Inserindo colunas na tabela
 
 `echo "QuerySeq	SubjectSeq	QseqLength	SseqLength	Pident	Evalue	SubjTitle	Specie	FullQueryLength" | cat - metaviraldmnd.tsv > Processmetaviraldmnd.tsv && mv Processmetaviraldmnd.tsv metaviraldmnd.tsv`
