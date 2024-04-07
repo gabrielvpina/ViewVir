@@ -17,7 +17,7 @@ for arquivo in $lista_arquivos; do
 sed -i 's/\[/\t/g; s/\]//g' $entrada
 
 
-echo "QuerySeq	SubjectSeq	QseqLength	SseqLength	Pident	Evalue	BitScore	SubjTitle	Specie	FullQueryLength" | cat - $entrada > $saida 
+echo "QuerySeq	SubjectSeq	QseqLength	SseqLength	Pident	Evalue	BitScore	SubjTitle	Species	FullQueryLength" | cat - $entrada > $saida 
 # && mv $saida $entrada
 
 done 
