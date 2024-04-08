@@ -22,4 +22,4 @@ echo "QuerySeq	SubjectSeq	QseqLength	SseqLength	Pident	Evalue	BitScore	SubjTitle
 
 done 
 
-rm diamond-output
+rm -r diamond-output
