@@ -2,9 +2,28 @@
 WorkingDir = "/home/gabriel/bioinfo/bioinfo_scripts/scripts_viral"
 setwd(WorkingDir)
 
+# Required packages
+if (!require("dplyr", quietly = TRUE))
 install.packages("dplyr")
 
+if (!require("plotly", quietly = TRUE))
+install.packages("plotly")
+
+if (!require("gapminder", quietly = TRUE))
+install.packages("gapminder")
+
+if (!require("htmltools", quietly = TRUE))
+install.packages("htmltools")
+
+if (!require("ggplot2", quietly = TRUE))
+  install.packages("ggplot2")
+
 library(dplyr)
+library(ggplot2)
+library(plotly)
+library(gapminder)
+library(htmlwidgets)
+
 
 # import all tables from ICTV
 ictvMSL <- read.csv("ICTV_data/ICTV_MSL.csv")
@@ -16,13 +35,15 @@ ictvVMR_virNames <- read.csv("ICTV_data/ICTV_VMR-virNames.csv")
 # merge all tables with rbind
 allVirus <- rbind(ictvMSL, ictvVMR_species, ictvVMR_virNames)
 
-arquivos <- zlist.files(path = "/home/gabriel/bioinfo/bioinfo_scripts/scripts_viral/diamond-processed", pattern = "\\.tsv$", full.names = TRUE)
+arquivos <- list.files(path = "/home/gabriel/bioinfo/bioinfo_scripts/scripts_viral/diamond-processed", pattern = "\\.tsv$", full.names = TRUE)
 
 # Crie a pasta para os resultados
 dir.create("diamond-results")
 
 # Loop para cada tabela .tsv
 for (arquivo_path in arquivos) {
+
+# Processando a Tabela    
   # Leia o arquivo
   arquivo <- read.table(arquivo_path, header = TRUE, sep = "\t")
   
@@ -39,13 +60,26 @@ for (arquivo_path in arquivos) {
   
   # Defina o caminho completo do arquivo de saída, incluindo o nome da pasta
   caminho_arquivo_output <- file.path("diamond-results", sub(".tsv", "_output.tsv", nome_arquivo_input))
+  plot_output <- file.path("diamond-results", sub(".tsv",".html", nome_arquivo_input))
   
   # Escreva os dados em um arquivo de saída
   write.table(arquivo, file = caminho_arquivo_output, sep = "\t")
+  
+# Grafico Interativo
+  
+  plot <- arquivo %>%
+    ggplot( aes(QseqLength, Species, size = Pident, color=Genome.composition)) +
+    geom_point() +
+    scale_y_discrete(labels = function(x) rep("", length(x))) +
+    theme_bw()
+  
+  ggplotly(plot)
+  
+  plot <- plotly::ggplotly(plot)
+  
+  htmlwidgets::saveWidget(plot, file = plot_output, selfcontained = TRUE)
 
 }
-
-
 
 
 
