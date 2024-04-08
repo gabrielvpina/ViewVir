@@ -1,3 +1,5 @@
+![alt text]([http://url/to/img.png](https://github.com/gabrielvpina/viralDiversity_analysis/blob/main/viralDiversity_analysis.png))
+
 # Fontes dos dados - ICTV
 
 - Virus Metadata Resource (VMR)
