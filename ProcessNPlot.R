@@ -1,5 +1,5 @@
 # Insert the directory of diamond-processed file
-WorkingDir = "/home/gabriel/bioinfo/bioinfo_scripts/scripts_viral"
+WorkingDir = "./"
 setwd(WorkingDir)
 
 # Required packages
