@@ -1,6 +1,6 @@
 ![screenshot](pipeline.png)
 
-#ViewVir
+# ViewVir
 
 ViewVir is a pipeline created for the visualization and analysis of viral metagenomes in RNAseq samples. The initial input to run the pipeline is the `unmapped_sequences` folder, which must contain the assembly of the RNAseq libraries of interest. ViewVir is based on Diamond Aligner analysis and uses interactive Plotly graphics to visualize results.
 
@@ -39,6 +39,10 @@ full_qseq - Full query sequence
 ### Columns to be inserted into the file:
 
 QuerySeq SubjectSeq QseqLength SseqLength Pident Evalue SubjTitle FullQueryLength
+
+# ViewVir Output
+
+![screenshot](viewvir.png)
 
 ### 1) Filter
 
