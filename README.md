@@ -1,4 +1,4 @@
-![screenshot]([pipeline.png](https://github.com/gabrielvpina/my_images/blob/main/pipeline.png))
+![alt text]([pipeline.png](https://github.com/gabrielvpina/my_images/blob/main/pipeline.png))
 
 # ViewVir
 
@@ -43,7 +43,7 @@ QuerySeq SubjectSeq QseqLength SseqLength Pident Evalue SubjTitle FullQueryLengt
 
 # ViewVir Output
 
-![screenshot](viewvir.png)
+![alt text](https://github.com/gabrielvpina/my_images/blob/main/viewvir.png)
 
 ### 1) Filter
 
