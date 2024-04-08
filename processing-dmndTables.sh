@@ -21,3 +21,5 @@ echo "QuerySeq	SubjectSeq	QseqLength	SseqLength	Pident	Evalue	BitScore	SubjTitle
 # && mv $saida $entrada
 
 done 
+
+rm diamond-output
