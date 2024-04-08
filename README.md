@@ -10,7 +10,7 @@ OBS - adicionar processo de importação do refseq viral e criação do banco de
 
 - Virus Metadata Feature (VMR)
 - Master Species Lists (MSL)
-- 
+
 ## Processing diamond data
 
 ### Basic query:
