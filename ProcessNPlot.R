@@ -110,7 +110,7 @@ for (arquivo_path in arquivos) {
   
   plot <- plotly::ggplotly(plot)
   
-  htmlwidgets::saveWidget(plot, file = plot_output, selfcontained = TRUE)
+  htmlwidgets::saveWidget(plot, file = plot_output, selfcontained = FALSE)
 
 }
 
