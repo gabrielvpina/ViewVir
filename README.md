@@ -13,19 +13,6 @@ OBS - adicionar processo de importação do refseq viral e criação do banco de
 ![alt text](https://github.com/gabrielvpina/my_images/blob/main/pipeline_viewvir.png)
 
 ## Processing diamond data
-
-### Basic query:
-
-`./diamond blastx -d reference -q ler.fasta -o correspond.tsv`
-
-### Query used:
-
-`./diamond blastx -d viralDB.dmnd -q SRR7172360_scaffolds.fasta --outfmt '6' qseqid sseqid qlen slen pident evalue bitscore stitle full_qseq --max-target-seqs '1' --out metaviraldmd.tsv`
-
-### Tab-separated columns:
-
-`qseqid sseqid qlen slen pident evalue bitscore stitle full_qseq`
-
 ### Columns are added to the first line of the output file.
 
 qseqid - Seq Query - id
@@ -45,18 +32,7 @@ QuerySeq SubjectSeq QseqLength SseqLength Pident Evalue SubjTitle FullQueryLengt
 
 ![alt text](https://github.com/gabrielvpina/my_images/blob/main/viewvir.png)
 
-### 1) Filter
-
-`grep -i 'RdRp\|RNA-dependent\|capsid\|coat\|replicase\|glycoprotein\|replicase\|nucleoprotein\|nucleocapsid' file.tsv > fileFiltered.tsv`
-
-### 2) Inserting new column
-
-- Turning brackets into tabs
-- Insertion of new column
-
-QuerySeq SubjectSeq QseqLength SseqLength Pident Evalue bitscore SubjTitle Species FullQueryLength
-
-### 3) Replacing square brackets with tab spaces
+To get more information, read the [Wiki page](https://github.com/gabrielvpina/ViewVir/wiki).
 
 `sed -i 's/\[/\t/g; s/\]/\t/g' file.tsv`
 
