@@ -1,4 +1,4 @@
-![screenshot](pipeline.png)
+![screenshot]([pipeline.png](https://github.com/gabrielvpina/my_images/blob/main/pipeline.png))
 
 # ViewVir
 
