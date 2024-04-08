@@ -1,4 +1,4 @@
-![screenshot](viralDiversity_analysis.png)
+![screenshot](pipeline.png)
 
 
 # Fontes dos dados - ICTV
