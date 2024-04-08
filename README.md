@@ -1,4 +1,4 @@
-![alt text]([pipeline.png](https://github.com/gabrielvpina/my_images/blob/main/pipeline.png))
+![alt text](https://github.com/gabrielvpina/my_images/blob/main/pipeline.png)
 
 # ViewVir
 
