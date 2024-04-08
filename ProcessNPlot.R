@@ -60,7 +60,7 @@ for (arquivo_path in arquivos) {
   
   # Defina o caminho completo do arquivo de saída, incluindo o nome da pasta
   caminho_arquivo_output <- file.path("diamond-results", sub(".tsv", "_output.tsv", nome_arquivo_input))
-  plot_output <- file.path("diamond-results", sub(".tsv",".html", nome_arquivo_input))
+  plot_output <- file.path("diamond-results", sub(".tsv","_bubblePlt.html", nome_arquivo_input))
   
   # Escreva os dados em um arquivo de saída
   write.table(arquivo, file = caminho_arquivo_output, sep = "\t")
