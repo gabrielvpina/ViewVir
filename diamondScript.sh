@@ -5,7 +5,7 @@ dir_name="diamond-output"
 mkdir -p "$dir_name"
 
 # Obter a lista de arquivos na pasta STAR_unmapped/
-lista_arquivos=$(ls STAR_unmapped/)
+lista_arquivos=$(ls unmapped_sequences/)
 
 # Iterar sobre os arquivos na lista
 for arquivo in $lista_arquivos; do
