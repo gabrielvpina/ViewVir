@@ -2,7 +2,6 @@
 
 - Virus Metadata Resource (VMR)
 - Master Species Lists (MSL)
-- 
 # Processando os dados do diamond
 
 ## Query basica:
