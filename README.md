@@ -33,9 +33,3 @@ QuerySeq SubjectSeq QseqLength SseqLength Pident Evalue SubjTitle FullQueryLengt
 ![alt text](https://github.com/gabrielvpina/my_images/blob/main/viewvir.png)
 
 To get more information, read the [Wiki page](https://github.com/gabrielvpina/ViewVir/wiki).
-
-`sed -i 's/\[/\t/g; s/\]/\t/g' file.tsv`
-
-### 4) Inserting columns into the table
-
-`echo "QuerySeq SubjectSeq QseqLength SseqLength Pident Evalue SubjTitle Specie FullQueryLength" | cat - metaviraldmnd.tsv > Processmetaviraldmnd.tsv && mv Processmetaviraldmnd.tsv metaviraldmnd.tsv`
