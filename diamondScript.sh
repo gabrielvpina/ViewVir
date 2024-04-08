@@ -5,12 +5,12 @@ dir_name="diamond-output"
 mkdir -p "$dir_name"
 
 # Obter a lista de arquivos na pasta STAR_unmapped/
-lista_arquivos=$(ls unmapped_sequences/)
+lista_arquivos=$(ls nonHost_sequences/)
 
 # Iterar sobre os arquivos na lista
 for arquivo in $lista_arquivos; do
     # Caminho de entrada e saída para o Fastp
-    entrada="STAR_unmapped/$arquivo"
+    entrada="nonHost_sequences/$arquivo"
     
     saida="$dir_name/$arquivo"
 
