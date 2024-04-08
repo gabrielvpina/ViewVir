@@ -1,5 +1,3 @@
-![alt text](https://github.com/gabrielvpina/my_images/blob/main/pipeline_viewvir.png)
-
 # ViewVir
 
 ViewVir is a pipeline created for the visualization and analysis of viral metagenomes in RNAseq samples. The initial input to run the pipeline is the `unmapped_sequences` folder, which must contain the assembly of the RNAseq libraries of interest. ViewVir is based on Diamond Aligner analysis and uses interactive Plotly graphics to visualize results.
@@ -11,6 +9,8 @@ OBS - adicionar processo de importação do refseq viral e criação do banco de
 
 - Virus Metadata Feature (VMR)
 - Master Species Lists (MSL)
+
+![alt text](https://github.com/gabrielvpina/my_images/blob/main/pipeline_viewvir.png)
 
 ## Processing diamond data
 
