@@ -23,6 +23,6 @@ There are three main outputs for each sample:
 - Interactive Bubble Plot (HTML)
 - Interactive Data Table (HTML)
 
-![alt text](https://github.com/gabrielvpina/my_images/blob/main/viewvir.png)
+![alt text](https://github.com/gabrielvpina/my_images/blob/main/viewvir-print.png)
 
 
