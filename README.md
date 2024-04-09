@@ -10,7 +10,7 @@ OBS - adicionar processo de importação do refseq viral e criação do banco de
 - Virus Metadata Feature (VMR)
 - Master Species Lists (MSL)
 
-![alt text](https://github.com/gabrielvpina/my_images/blob/main/pipeline_viewvir.png)
+![alt text](https://github.com/gabrielvpina/my_images/blob/main/viewvir-pipe.png)
 
 ## Processing diamond data
 ### Columns are added to the first line of the output file.
