@@ -5,7 +5,7 @@ To get more information, read the [Wiki page](https://github.com/gabrielvpina/Vi
 
 
 ## Viral data sources - ICTV
-
+ViewVir uses data from ICTV (International Committee on Taxonomy of Viruses) to obtain the genomic composition of each virus. However, it is important to note that this information may be out of date. The ICTV sources used by ViewVir are:
 - Virus Metadata Feature [(VMR)](https://ictv.global/vmr)
 - Master Species Lists [(MSL)](https://ictv.global/msl)
 
