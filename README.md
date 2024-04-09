@@ -15,6 +15,14 @@ ViewVir utilizes data from the International Committee on Taxonomy of Viruses (I
 
 # ViewVir Output
 
+
+ViewVir output files are located in the `ViewVir-results` folder. Within this folder, each submitted sample is represented by a folder named after the input sample.
+
+There are three main outputs for each sample:
+- Formatted Table (.tsv)
+- Interactive Bubble Plot (HTML)
+- Interactive Data Table (HTML)
+
 ![alt text](https://github.com/gabrielvpina/my_images/blob/main/viewvir.png)
 
 
