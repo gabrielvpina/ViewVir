@@ -1,5 +1,5 @@
 if (!require("here", quietly = TRUE))
-install.packages("here")
+  install.packages("here")
 library(here)
 
 # Insert the directory of diamond-processed file
@@ -8,22 +8,28 @@ setwd(WorkingDir)
 
 # Required packages
 if (!require("dplyr", quietly = TRUE))
-install.packages("dplyr")
+  install.packages("dplyr")
 
 if (!require("pandoc", quietly = TRUE))
-install.packages("pandoc")
+  install.packages("pandoc")
 
 if (!require("plotly", quietly = TRUE))
-install.packages("plotly")
+  install.packages("plotly")
 
 if (!require("gapminder", quietly = TRUE))
-install.packages("gapminder")
+  install.packages("gapminder")
 
 if (!require("htmltools", quietly = TRUE))
-install.packages("htmltools")
+  install.packages("htmltools")
 
 if (!require("ggplot2", quietly = TRUE))
-install.packages("ggplot2")
+  install.packages("ggplot2")
+
+if (!require("DT", quietly = TRUE))
+  install.packages("DT")
+
+if (!require("rmarkdown", quietly = TRUE))
+  install.packages("rmarkdown")
 
 library(dplyr)
 library(ggplot2)
@@ -31,7 +37,8 @@ library(plotly)
 library(gapminder)
 library(htmlwidgets)
 library(pandoc)
-
+library(DT)
+library(rmarkdown)
 
 
 # import all tables from ICTV
@@ -53,8 +60,8 @@ if (!dir.exists("ViewVir-results")) {
 
 # Loop para cada tabela .tsv
 for (arquivo_path in arquivos) {
-
-# Processando a Tabela    
+  
+  # Processando a Tabela    
   # Leia o arquivo
   arquivo <- read.table(arquivo_path, header = TRUE, sep = "\t")
   
@@ -65,9 +72,8 @@ for (arquivo_path in arquivos) {
   outrasCols <- setdiff(names(arquivo), "Genome.composition")
   arquivo <- arquivo[, c("QuerySeq", "SubjectSeq", "QseqLength", "SseqLength", "Pident", "Evalue", "BitScore", "SubjTitle",
                          "Species", "Genome.composition", "FullQueryLength")]
-
   
-############################## OLD VERSION OUTPUT ###########################################  
+  ############################## OLD VERSION OUTPUT ###########################################  
   # Obtenha o nome do arquivo de entrada
   #nome_arquivo_input <- basename(arquivo_path)
   
@@ -78,10 +84,10 @@ for (arquivo_path in arquivos) {
   
   # Escreva os dados em um arquivo de saída
   #write.table(arquivo, file = caminho_arquivo_output, sep = "\t")
-################################################################################  
+  ################################################################################  
   
   
-#################### função subpastas (teste) ###################################  
+  #################### função subpastas (teste) ###################################  
   # Obtenha o nome do arquivo de entrada
   nome_arquivo_input <- basename(arquivo_path)
   
@@ -92,13 +98,15 @@ for (arquivo_path in arquivos) {
   
   # Defina o caminho completo do arquivo de saída dentro do diretório criado
   caminho_arquivo_output <- file.path(pasta_nome_arquivo, paste0(sub(".tsv", "_output.tsv", nome_arquivo_input)))
-  plot_output <- file.path(pasta_nome_arquivo, paste0(sub(".tsv", "_bubblePlt.html", nome_arquivo_input)))
+  
+  plot_output_bubble <- file.path(pasta_nome_arquivo, paste0(sub(".tsv", "_bubblePlt.html", nome_arquivo_input)))
+  plot_output_table <- file.path(pasta_nome_arquivo, paste0(sub(".tsv", "_table.html", nome_arquivo_input)))
   
   # Escreva os dados em um arquivo de saída dentro do diretório criado
   write.table(arquivo, file = caminho_arquivo_output, sep = "\t")
-##################################################################################
+  ##################################################################################
   
-# Grafico Interativo
+  # Grafico Interativo
   
   plot <- arquivo %>%
     ggplot( aes(QseqLength, Species, size = Pident, color=Genome.composition)) +
@@ -110,7 +118,10 @@ for (arquivo_path in arquivos) {
   
   plot <- plotly::ggplotly(plot)
   
-  htmlwidgets::saveWidget(plot, file = plot_output, selfcontained = FALSE)
-
+  table <- datatable(arquivo)
+  
+  htmlwidgets::saveWidget(plot, file = plot_output_bubble, selfcontained = FALSE)
+  htmlwidgets::saveWidget(table, file = plot_output_table, selfcontained = FALSE)
+    
+  
 }
-
