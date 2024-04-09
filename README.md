@@ -1,13 +1,14 @@
 # ViewVir
 
-ViewVir is a simple pipeline created for visualization and analysis of viral metagenomes in RNAseq samples. The initial input to run the pipeline is the `nonHost_sequences` folder, which must contain the assembly of the RNAseq libraries of interest. ViewVir is based on Diamond Aligner analysis and uses interactive Plotly graphics to visualize results.
-To get more information, read the [Wiki page](https://github.com/gabrielvpina/ViewVir/wiki).
+ViewVir is a simple pipeline created for the visualization and analysis of viral metagenomes in RNAseq samples. The initial input required to run the pipeline is the `nonHost_sequences` folder, which should contain the assemblies of the RNAseq libraries of interest. ViewVir relies on Diamond Aligner analysis and utilizes interactive Plotly graphics for result visualization.
 
+For more detailed information, please refer to the [Wiki page](https://github.com/gabrielvpina/ViewVir/wiki).
 
-## Viral data sources - ICTV
-ViewVir uses data from ICTV (International Committee on Taxonomy of Viruses) to obtain the genomic composition of each virus. However, it is important to note that this information may be out of date. The ICTV sources used by ViewVir are:
-- Virus Metadata Feature [(VMR)](https://ictv.global/vmr)
+## Viral Data Sources - ICTV
+ViewVir utilizes data from the International Committee on Taxonomy of Viruses (ICTV) to obtain the genomic composition of each virus. However, it's worth noting that this information may be outdated. The ICTV sources utilized by ViewVir are:
+- Virus Metadata Feature [(VMF)](https://ictv.global/vmf)
 - Master Species Lists [(MSL)](https://ictv.global/msl)
+
 
 ![alt text](https://github.com/gabrielvpina/my_images/blob/main/viewvir-pipe.png)
 
