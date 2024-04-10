@@ -27,14 +27,21 @@ library(DT)
 
 
 # import all tables from ICTV
-ictvMSL <- read.csv("ICTV_data/ICTV_MSL.csv")
+ictvMSL <- read.csv("data/ICTV_MSL.csv")
 colnames(ictvMSL) <- c("Species","Genome.composition")
 
-ictvVMR_species <- read.csv("ICTV_data/ICTV_VMR-species.csv")
-ictvVMR_virNames <- read.csv("ICTV_data/ICTV_VMR-virNames.csv")
+ictvVMR_species <- read.csv("data/ICTV_VMR-species.csv")
+
+ictvVMR_virNames <- read.csv("data/ICTV_VMR-virNames.csv")
+
+ncbiSpecie <- read.csv("data/NCBI_virSpecies.csv")
+colnames(ncbiSpecie) <- c("Species","Genome.composition")
+
+ncbiNames <- read.csv("data/NCBI_virName.csv")
+colnames(ncbiNames) <- c("Species","Genome.composition")
 
 # merge all tables with rbind
-allVirus <- rbind(ictvMSL, ictvVMR_species, ictvVMR_virNames)
+allVirus <- rbind(ncbiNames, ncbiSpecie, ictvMSL, ictvVMR_species, ictvVMR_virNames)
 
 arquivos <- list.files(path = "diamond-processed/", pattern = "\\.tsv$", full.names = TRUE)
 
