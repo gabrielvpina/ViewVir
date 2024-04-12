@@ -18,4 +18,10 @@ cap3 $entrada >> $saida
     
 done
 
+cd cap3-output 
+
+rm *[^.fasta]
+
+cd ..
+
 
