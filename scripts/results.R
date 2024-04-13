@@ -79,7 +79,9 @@ for (arquivo_path in arquivos) {
 ################################################################################  
   
   
-#################### função subpastas (teste) ###################################  
+#################### função subpastas (teste) ###################################
+
+  
   # Obtenha o nome do arquivo de entrada
   nome_arquivo_input <- basename(arquivo_path)
   
@@ -97,6 +99,17 @@ for (arquivo_path in arquivos) {
   # Escreva os dados em um arquivo de saída dentro do diretório criado
   write.table(arquivo, file = caminho_arquivo_output, sep = "\t")
 ##################################################################################
+
+# Filtro de sequencias
+  
+  arquivo <- arquivo[arquivo$QseqLength >= 450,]
+
+  
+# Criando coluna com as informações do subject
+  
+  arquivo$MatchSequence <- paste(arquivo$Species, arquivo$SubjTitle, sep = ' - ')
+  
+  
   
 # Grafico Interativo
   
