@@ -11,7 +11,7 @@ ViewVir utilizes data from the International Committee on Taxonomy of Viruses (I
 - [NCBI Virus](https://www.ncbi.nlm.nih.gov/labs/virus/vssi/#/)
 
 
-![alt text](https://github.com/gabrielvpina/my_images/blob/main/VVpipeline.png)
+![alt text](https://github.com/gabrielvpina/my_images/blob/main/pipeline.png)
 
 
 # ViewVir Output
