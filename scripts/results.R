@@ -64,6 +64,14 @@ for (arquivo_path in arquivos) {
   outrasCols <- setdiff(names(arquivo), "Genome.composition")
   arquivo <- arquivo[, c("QuerySeq", "SubjectSeq", "QseqLength", "SseqLength", "Pident", "Evalue", "QCover", "SubjTitle",
                          "Species", "Genome.composition", "FullQueryLength")]
+  
+  # Filtro de sequencias
+  arquivo <- arquivo[arquivo$QseqLength >= 450,]
+  
+  arquivo  <- dplyr::distinct(arquivo)
+  
+  
+  
 
 ############################## OLD VERSION OUTPUT ###########################################  
   # Obtenha o nome do arquivo de entrada
@@ -79,9 +87,7 @@ for (arquivo_path in arquivos) {
 ################################################################################  
   
   
-#################### função subpastas (teste) ###################################
-
-  
+#################### função subpastas (teste) ###################################  
   # Obtenha o nome do arquivo de entrada
   nome_arquivo_input <- basename(arquivo_path)
   
@@ -96,25 +102,31 @@ for (arquivo_path in arquivos) {
   plot_output_bubble <- file.path(pasta_nome_arquivo, paste0(sub(".tsv", "_bubblePlt.html", nome_arquivo_input)))
   plot_output_table <- file.path(pasta_nome_arquivo, paste0(sub(".tsv", "_table.html", nome_arquivo_input)))
   
+  
   # Escreva os dados em um arquivo de saída dentro do diretório criado
-  write.table(arquivo, file = caminho_arquivo_output, sep = "\t")
+  write.table(arquivo, file = caminho_arquivo_output, sep = "\t", row.names = FALSE)
+  
+  
+################################### RNA Virus Table ##################################################################  
+  
+  arquivoRNA <- arquivo[arquivo$Genome.composition %in% c("ssRNA(-)","ssRNA(+/-)","ssRNA(+)","ssRNA-RT","RNA"),]
+  
+  arquivoRNA  <- dplyr::distinct(arquivoRNA)
+  
+  output_RNA_table <- file.path(pasta_nome_arquivo, paste0(sub(".tsv", "_RNA-virus.tsv", nome_arquivo_input)))
+  
+  write.table(arquivoRNA, file = output_RNA_table, sep = "\t", row.names = FALSE)
 ##################################################################################
+  
 
-# Filtro de sequencias
-  
-  arquivo <- arquivo[arquivo$QseqLength >= 450,]
 
-  
-# Criando coluna com as informações do subject
-  
-  arquivo$MatchSequence <- paste(arquivo$Species, arquivo$SubjTitle, sep = ' - ')
-  
-  
   
 # Grafico Interativo
   
+  arquivo$MatchSequence <- paste(arquivo$Species, arquivo$SubjTitle, sep = ' - ')
+  
   plot <- arquivo %>%
-    ggplot(aes(QseqLength, Species, size = QCover, fill=Pident, color=Genome.composition)) +
+    ggplot(aes(QseqLength, MatchSequence, size = QCover, fill=Pident, color=Genome.composition)) +
     geom_point() +
     scale_y_discrete(labels = function(x) rep("", length(x))) +
     theme_bw()
