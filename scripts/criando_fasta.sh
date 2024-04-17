@@ -1,6 +1,6 @@
 #!/bin/bash
 
-lista_arquivos=$(ls "ViewVir-results"/*/*pre_fasta.tsv)
+lista_arquivos=$(ls "ViewVir-results"/*/*_pre_fasta.tsv)
 
 for arquivo in $lista_arquivos; do
 
