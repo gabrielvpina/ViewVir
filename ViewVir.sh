@@ -2,7 +2,6 @@
 
 chmod +x scripts/*.sh
 
-
 scripts/./cap3.sh
 
 scripts/./proc-cap3-out.sh
