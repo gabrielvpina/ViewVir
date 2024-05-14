@@ -6,4 +6,6 @@ pip install plotly &&\
 
 pip install plotly.express &&\
 
-pip install orfipy
+pip install orfipy &&\
+
+chmod +x ViewVir.sh
