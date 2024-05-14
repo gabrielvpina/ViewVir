@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Criar um novo diretório
-c
+dir_name="diamond-output"
+mkdir -p "$dir_name"
 
 # Obter a lista de arquivos na pasta STAR_unmapped/
 lista_arquivos=$(ls "cap3-processed/")
