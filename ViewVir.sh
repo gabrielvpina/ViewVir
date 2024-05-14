@@ -14,5 +14,7 @@ python3 scripts/results.py && \
 
 scripts/./criando_fasta.sh && \ 
 
-scripts/./findORFS.sh
+scripts/./findORFS.sh && \ 
+
+python3 xtractTransORF.py
 
