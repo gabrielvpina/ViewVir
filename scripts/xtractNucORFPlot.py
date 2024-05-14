@@ -4,10 +4,9 @@ from intervaltree import IntervalTree
 import os
 from dna_features_viewer import GraphicFeature, GraphicRecord
 
-
 def process_bed_files(bed_folder):
     dicionario = {}
-    lista_nomes = ["None"]
+    lista_nomes = []
 
     for bed_file in os.listdir(bed_folder):
         if bed_file.endswith(".bed"):
@@ -27,7 +26,16 @@ def process_bed_files(bed_folder):
                         lista_nomes.append(contig)
                 else:
                     if tamanho > 150:
-                        dicionario[contig][inicio:final+1] = (inicio, final)
+                        contida = False
+                        for interval in dicionario[contig]:
+                            # Verifica se a nova sequência está contida em uma já existente
+                            if inicio >= interval.begin and final <= interval.end:
+                                contida = True
+                                break
+                        if not contida:
+                            # Remove intervalos menores que estão sobrepostos com a nova sequência
+                            dicionario[contig].chop(inicio, final+1)
+                            dicionario[contig][inicio:final+1] = (inicio, final)
 
     return dicionario
 
@@ -46,8 +54,7 @@ def process_fasta_files(fasta_folder, dicionario, output_folder):
                             nucleotide_seq = record.seq[inicio:final+1] if final + 1 == len(record.seq) else record.seq[inicio:final+3]
                             if len(nucleotide_seq) % 3 != 0:
                                 nucleotide_seq = nucleotide_seq[:-(len(nucleotide_seq) % 3)]  # Truncar para múltiplo de 3
-                            protein_seq = Seq.Seq(nucleotide_seq).translate(to_stop=True)
-                            fasta_arch.write(f">{contig}&numerador{numerador}\n{protein_seq}\n")
+                            fasta_arch.write(f">{contig}.{numerador}\n{nucleotide_seq}\n")
                             numerador += 1
 
 
