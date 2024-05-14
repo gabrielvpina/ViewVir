@@ -12,7 +12,7 @@ saida="ViewVir-results/$dir_name"
 
 nome=$(basename "$arquivo" .fasta)
 
-orfipy --partial-3 --partial-5 --outdir $saida $entrada --bed "${nome}.bed" --longest
+orfipy --partial-3 --partial-5 --outdir $saida $entrada --bed "${nome}.bed"
 
 done
 
