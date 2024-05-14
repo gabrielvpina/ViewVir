@@ -45,7 +45,7 @@ def process_fasta_files(fasta_folder, dicionario, output_folder):
                             nucleotide_seq = record.seq[inicio:final+1] if final + 1 == len(record.seq) else record.seq[inicio:final+3]
                             if len(nucleotide_seq) % 3 != 0:
                                 nucleotide_seq = nucleotide_seq[:-(len(nucleotide_seq) % 3)]  # Truncar para múltiplo de 3
-                            protein_seq = Seq(nucleotide_seq).translate(to_stop=False)
+                            protein_seq = Seq(nucleotide_seq).translate(to_stop=True)
                             fasta_arch.write(f">{contig}.{numerador}\n{protein_seq}\n")
                             numerador += 1
 
