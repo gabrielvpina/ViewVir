@@ -2,16 +2,17 @@
 
 chmod +x scripts/*.sh
 
-scripts/./cap3.sh && \
+scripts/./cap3.sh
 
-scripts/./proc-cap3-out.sh && \
+scripts/./proc-cap3-out.sh
 
 scripts/./diamondScript.sh && \
 
 scripts/./processing-dmndTables.sh && \
 
-Rscript scripts/results.R && \
+python3 scripts/results.py && \
 
-rm -r diamond-processed && \
+scripts/./criando_fasta.sh && \ 
 
-scripts/./criando_fasta.sh 
+cripts/./findORFS.sh
+
