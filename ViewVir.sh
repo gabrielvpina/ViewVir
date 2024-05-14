@@ -14,5 +14,5 @@ python3 scripts/results.py && \
 
 scripts/./criando_fasta.sh && \ 
 
-cripts/./findORFS.sh
+scripts/./findORFS.sh
 
