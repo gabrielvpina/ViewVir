@@ -10,11 +10,4 @@ scripts/./diamondScript.sh && \
 
 scripts/./processing-dmndTables.sh && \
 
-python3 scripts/results.py && \
-
-scripts/./criando_fasta.sh && \ 
-
-scripts/./findORFS.sh && \ 
-
-python3 xtractTransORF.py
-
+python3 scripts/resultsNEW.py && \ 
