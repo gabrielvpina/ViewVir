@@ -1,14 +1,15 @@
-# Resultados criando um arquivo FASTA junto.
+# Resultados criando um arquivo FASTA e .bed junto.
 
 import os
 import pandas as pd
 import plotly.express as px
 from plotly.offline import plot
-from plotly.subplots import make_subplots
-from intervaltree import IntervalTree
-from dna_features_viewer import GraphicFeature, GraphicRecord
+import subprocess
 
 # Leitura dos dados de vírus
+ictvMSL = pd.read_csv("data/ICTV_MSL.csv", names=["Species", "Genome.composition"])
+ictvVMR_species = pd.read_csv("data/ICTV_VMR-species.csv")
+ictvVMR_virNames = pd.read_csv("data/ICTV_VMR-virNames.csv")
 ncbiSpecie = pd.read_csv("data/NCBI_virSpecies.csv", names=["Species", "Genome.composition"])
 ncbiNames = pd.read_csv("data/NCBI_virName.csv", names=["Species", "Genome.composition"])
 
@@ -20,7 +21,6 @@ def list_full_paths(directory):
     return [os.path.join(directory, file) for file in os.listdir(directory)]
 
 arquivos = list_full_paths("diamond-processed/")
-
 
 # Crie a pasta para os resultados
 output_folder = "ViewVir-results"
@@ -39,7 +39,7 @@ for arquivo_path in arquivos:
     # Mude a ordem das colunas
     outrasCols = list(set(arquivo.columns) - {"Genome.composition"})
     arquivo = arquivo[["QuerySeq", "SubjectSeq", "QseqLength", "SseqLength", "Pident", "Evalue", "QCover",
-                       "SubjTitle", "Species", "Genome.composition", "FullQueryLength"]]
+                      "SubjTitle", "Species", "Genome.composition", "FullQueryLength"]]
 
     # Filtro de sequencias
     arquivo = arquivo[arquivo["QseqLength"] >= 500]
@@ -58,13 +58,13 @@ for arquivo_path in arquivos:
     caminho_arquivo_output = os.path.join(pasta_nome_arquivo, nome_arquivo_input.replace(".fasta_merged.fasta.tsv", "_output.tsv"))
 
     plot_output_bubble = os.path.join(pasta_nome_arquivo, nome_arquivo_input.replace(".fasta_merged.fasta.tsv", "_bubblePlt.html"))
-    
+
     # Escreva os dados em um arquivo de saída dentro do diretório criado
     arquivo.to_csv(caminho_arquivo_output, sep="\t", index=False)
 
     # Filtro para vírus de RNA
-    arquivo_RNA = arquivo[arquivo["Genome.composition"].isin(["ssRNA(-)", "ssRNA(+/-)", "ssRNA(+)", "ssRNA-RT", "RNA","unknown","NA"])]
-    arquivo_RNA = arquivo_RNA.drop_duplicates()	
+    arquivo_RNA = arquivo[arquivo["Genome.composition"].isin(["ssRNA(-)", "ssRNA(+/-)", "ssRNA(+)", "ssRNA-RT", "RNA", "unknown", "NA"])]
+    arquivo_RNA = arquivo_RNA.drop_duplicates()
 
     # Escreva os dados em um arquivo de saída separado para vírus de RNA
     output_RNA_table = os.path.join(pasta_nome_arquivo, nome_arquivo_input.replace(".fasta_merged.fasta.tsv", "_RNA-virus.tsv"))
@@ -74,6 +74,14 @@ for arquivo_path in arquivos:
     output_pre = os.path.join(pasta_nome_arquivo, nome_arquivo_input.replace(".fasta_merged.fasta.tsv", "_pre_fasta.tsv"))
     arquivo_PRE = arquivo_RNA[["QuerySeq", "FullQueryLength"]]
     arquivo_PRE.to_csv(output_pre, sep="\t", index=False)
+
+    # Processar _pre_fasta.tsv para gerar RNA-virus.fasta
+    samp = os.path.basename(output_pre).replace("_pre_fasta.tsv", "")
+    with open(output_pre, "r") as infile, open(f"{pasta_nome_arquivo}/{samp}_RNA-virus.fasta", "w") as outfile:
+        lines = infile.readlines()
+        for line in lines[1:]:  # Ignorar a primeira linha
+            line = line.strip().replace('\t', '\n')
+            outfile.write(f">{line}\n")
 
     # Gráfico Interativo
     arquivo["MatchSequence"] = arquivo["Species"] + " -> " + arquivo["SubjTitle"]
@@ -85,23 +93,27 @@ for arquivo_path in arquivos:
     fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title='ViewVir interactive scatter plot')
     plot(fig, filename=plot_output_bubble)
 
-
-# Função para processar arquivos _pre_fasta.tsv
-def process_fasta_files():
-    lista_arquivos = [os.path.join(root, file)
-                      for root, _, files in os.walk(output_folder)
-                      for file in files if file.endswith("pre_fasta.tsv")]
+    # Processar arquivos fasta com orfipy
+    lista_arquivos = [os.path.join(pasta_nome_arquivo, file)
+                      for file in os.listdir(pasta_nome_arquivo)
+                      if file.endswith(".fasta")]
 
     for arquivo in lista_arquivos:
-        samp = os.path.basename(arquivo).replace("_pre_fasta.tsv", "")
-        
-        with open(arquivo, "r") as infile, open(f"{output_folder}/{samp}_RNA-virus.fasta", "w") as outfile:
-            lines = infile.readlines()
-            for line in lines[1:]:  # Ignorar a primeira linha
-                line = line.strip().replace('\t', '\n')
-                outfile.write(f">{line}\n")
+        entrada = arquivo
+        nome = os.path.basename(arquivo).replace(".fasta", "")
+        saida = pasta_nome_arquivo
 
-process_fasta_files()
+        # Executa orfipy
+        orfipy_cmd = [
+            "orfipy", "--partial-3", "--partial-5", "--outdir", saida, entrada, "--bed", f"{nome}.bed"
+        ]
+        subprocess.run(orfipy_cmd, check=True)
+
+    # Remove arquivos .log
+    log_files = [os.path.join(pasta_nome_arquivo, file) for file in os.listdir(pasta_nome_arquivo) if file.endswith(".log")]
+    for log_file in log_files:
+        os.remove(log_file)
+
     
 
 
