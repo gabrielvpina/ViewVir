@@ -1,10 +1,15 @@
-# Resultados criando um arquivo FASTA e .bed junto.
-
 import os
 import pandas as pd
 import plotly.express as px
 from plotly.offline import plot
 import subprocess
+from dna_features_viewer import GraphicFeature, GraphicRecord
+from intervaltree import IntervalTree
+from Bio import SeqIO, Seq
+
+
+
+##########################################################################################
 
 # Leitura dos dados de vírus
 ictvMSL = pd.read_csv("data/ICTV_MSL.csv", names=["Species", "Genome.composition"])
@@ -114,7 +119,87 @@ for arquivo_path in arquivos:
     for log_file in log_files:
         os.remove(log_file)
 
+    #############################################################################################
+    #################################### PLOT ###################################################
     
+
+    fasta_files = [os.path.join(pasta_nome_arquivo, fasta) for fasta in os.listdir(pasta_nome_arquivo) if fasta.endswith(".fasta")]
+    for fasta_file in fasta_files:
+        output_subfolder = os.path.join(pasta_nome_arquivo, os.path.splitext(os.path.basename(fasta_file))[0])  # Pasta de saída na mesma pasta que o arquivo FASTA
+        os.makedirs(output_subfolder, exist_ok=True)  # Criar a pasta de saída, se ainda não existir
+
+    # Processamento dos arquivos BED
+    dicionario = {}
+    lista_nomes = []
+
+    # Iterar sobre os arquivos BED
+    bed_folder = os.path.dirname(fasta_file)
+    for bed_file in os.listdir(bed_folder):
+        if bed_file.endswith(".bed"):
+            bed_file_path = os.path.join(bed_folder, bed_file)
+            fasta_bed = pd.read_table(bed_file_path, header=None, sep="\t")
+
+            # Iterar sobre as linhas do arquivo BED
+            for i in range(len(fasta_bed)):
+                tamanho = int(fasta_bed.iloc[i, 3].split(";")[2].replace("ORF_len=", ""))
+                contig = str(fasta_bed.iloc[i, 0])
+                inicio = int(fasta_bed.iloc[i, 1])
+                final = int(fasta_bed.iloc[i, 2])
+
+                if contig not in lista_nomes:
+                    if tamanho > 150:
+                        dicionario[contig] = IntervalTree()
+                        dicionario[contig][inicio:final+1] = (inicio, final)
+                        lista_nomes.append(contig)
+                else:
+                    if tamanho > 150:
+                        contida = False
+                        for interval in dicionario[contig]:
+                            # Verifica se a nova sequência está contida em uma já existente
+                            if inicio >= interval.begin and final <= interval.end:
+                                contida = True
+                                break
+                        if not contida:
+                            # Remove intervalos menores que estão sobrepostos com a nova sequência
+                            dicionario[contig].chop(inicio, final+1)
+                            dicionario[contig][inicio:final+1] = (inicio, final)
+
+    # Processamento dos arquivos FASTA
+    output_subfolder_fasta = os.path.join(output_subfolder, "processed.fasta")  # Arquivo de saída de FASTA processado
+    with open(output_subfolder_fasta, "w") as fasta_arch:
+        # Iterar sobre os registros FASTA no arquivo
+        for record in SeqIO.parse(fasta_file, "fasta"):
+            contig = str(record.id)
+            # Verificar se o contig está presente no dicionário
+            if contig in dicionario:
+                numerador = 0
+                # Iterar sobre os intervalos para o contig específico
+                for interval in sorted(dicionario[contig]):
+                    inicio, final = interval.begin, interval.end - 1
+                    # Extrair a sequência do registro FASTA com base nos intervalos
+                    nucleotide_seq = record.seq[inicio:final+1] if final + 1 == len(record.seq) else record.seq[inicio:final+3]
+                    if len(nucleotide_seq) % 3 != 0:
+                        nucleotide_seq = nucleotide_seq[:-(len(nucleotide_seq) % 3)]  # Truncar para múltiplo de 3
+                    # Escrever a sequência no arquivo de saída
+                    fasta_arch.write(f">{contig}.{numerador}\n{nucleotide_seq}\n")
+                    numerador += 1
+
+    # Plotagem dos gráficos
+    for record in SeqIO.parse(fasta_file, "fasta"):
+        contig = str(record.id)
+        if contig in dicionario:
+            length = len(record.seq)
+            features = []
+
+            for interval in sorted(dicionario[contig]):
+                inicio, final = interval.begin, interval.end - 1
+                features.append(GraphicFeature(start=inicio, end=final, strand=+1, color="#ffd700"))
+
+            record_graphic = GraphicRecord(sequence_length=length, features=features)
+            ax, _ = record_graphic.plot(figure_width=5)
+            plot_output_path = os.path.join(output_subfolder, f'sequence_{contig}.pdf')  # Caminho de saída específico
+            ax.figure.savefig(plot_output_path, bbox_inches='tight')
+
 
 
 
