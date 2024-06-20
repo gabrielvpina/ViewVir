@@ -44,3 +44,24 @@ def process_diamondTbl(file_path):
     # Dados em um arquivo de saída separado para vírus não DNA
     nonDNA_table = os.path.join(viewvirFolder, inputBasename.replace(".tsv", "_nonDNA.tsv"))
     tableRNA.to_csv(nonDNA_table, sep="\t", index=False)
+
+
+    
+    vvfolder = "ViewVir-results"
+    inputBasename = os.path.basename(vvfolder)
+    files = os.listdir(vvfolder)
+
+    output_pre = os.path.join(vvfolder, inputBasename.replace("_nonDNA.tsv", "_pre.tsv"))
+    #tableRNA = pd.read_csv(vvfolder + nonDNA)
+    arquivo_PRE = tableRNA[["QuerySeq", "FullQueryLength"]]
+    arquivo_PRE.to_csv(output_pre, sep="\t", index=False)
+
+    # Processar _pre.tsv para gerar RNA-virus.fasta
+    samp = os.path.basename(output_pre).replace("_pre.tsv", "")
+    with open(output_pre, "r") as infile, open(f"{vvfolder}/{samp}_nonDNA.fasta", "w") as outfile:
+        lines = infile.readlines()
+        for line in lines[1:]:  # Ignorar a primeira linha
+            line = line.strip().replace('\t', '\n')
+            outfile.write(f">{line}\n")
+    
+    os.remove(output_pre)
