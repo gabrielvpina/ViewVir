@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from modules.tblfmt import process_diamondTbl
 from modules.findorf import findorf
+from modules.processBED import bedgc1
 
 vvfolder = "ViewVir-results"
 
@@ -20,3 +21,5 @@ process_diamondTbl(dmndtable,vvfolder)
 # Criar Orfs
 findorf(vvfolder)
 
+# Processing ORFs
+bedgc1(vvfolder)
