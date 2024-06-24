@@ -35,6 +35,7 @@ def parse_orf_fasta(file_path):
         additional_info_dict = {info.split(':')[0]: info.split(':')[1] for info in additional_info}
 
         orf_data.append({
+            'contig_full': contig_full,
             'contig': contig,
             'start': start,
             'end': end,
@@ -65,7 +66,7 @@ def create_graphics(output_file, orfs_by_contig, nuc_data):
         for orf in orfs:
             strand = 1 if orf['strand'] == '+' else -1
             color = "#ffcccc" if strand == 1 else "#ccccff"
-            label = f"{orf['start']}-{orf['end']} ({orf['strand']})"
+            label = f"{orf['contig_full']}: {orf['start']}-{orf['end']} ({orf['strand']})"
             feature = GraphicFeature(start=orf['start'], end=orf['end'], strand=strand, color=color, label=label)
             features.append(feature)
         
@@ -73,7 +74,10 @@ def create_graphics(output_file, orfs_by_contig, nuc_data):
         record = GraphicRecord(sequence_length=sequence_length, features=features)
         plot = record.plot_with_bokeh(figure_width=15)
         plot_html = file_html(plot, CDN, f"Contig: {contig}")
-        html_content.append(plot_html)
+        #html_content.append(plot_html)
+        
+        title_html = f"<h3>Contig: {contig}</h3>"
+        html_content.append(title_html + plot_html)
 
         # Debug: Print the HTML content length for each contig
         print(f"Generated HTML for contig {contig}, length: {len(plot_html)}")
