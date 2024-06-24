@@ -95,9 +95,32 @@ def create_graphics(output_file, orf_data_by_contig, nuc_data):
 
             # Debug: Print the HTML content length for each contig and code
             print(f"Generated HTML for contig {contig}, code {code}, length: {len(plot_html)}")
-      
+
     with open(output_file, "w") as f:
-        f.write("<br><br>".join(html_content))
+        f.write(f"""<!DOCTYPE html>
+                    <html>
+                    <head>
+                    <style>
+                    body {{
+                        font-family: 'Ubuntu', sans-serif;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                    }}
+                    .container {{
+                        max-width: 800px;
+                        padding: 20px;
+                    }}
+                    </style>
+                    </head>
+                    <body>
+                    <div class="container">
+                    <br><br>
+                    {''.join(html_content)}
+                    </div>
+                    </body>
+                    </html>""")
 
 # Função principal
 def main(orf_fasta_files, nuc_fasta_file, output_file):
@@ -123,9 +146,9 @@ def main(orf_fasta_files, nuc_fasta_file, output_file):
 
 # Caminhos para os arquivos FASTA de ORFs e o arquivo HTML de saída
 orf_fasta_files = [
-    ('teste_ORFgc1.fasta', 'GeneticCode1'),
-    ('teste_ORFgc5.fasta', 'GeneticCode5'),
-    ('teste_ORFgc11.fasta', 'GeneticCode11')
+    ('teste_ORFgc1.fasta', 'Genetic Code 01'),
+    ('teste_ORFgc5.fasta', 'Genetic Code 05'),
+    ('teste_ORFgc11.fasta', 'Genetic Code 11')
 ]
 nuc_fasta_file = 'teste_nonDNA.fasta'
 output_file = 'orf_plots.html'
