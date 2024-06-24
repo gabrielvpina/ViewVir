@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-def cap3(inputContig,outputFolder):\
+def cap3(inputContig,outputFolder):
     # Pasta para os resultados
     if not os.path.exists(outputFolder):
         os.makedirs(outputFolder)
@@ -21,27 +21,22 @@ def cap3(inputContig,outputFolder):\
             sample = contigs.replace(".fasta.cap.contigs","")
             print(f"Processando amostra {sample}")
 
-            #singlets = f"+{outputFolder}/{sample}.fasta.cap.singlets"
             for singlets in os.listdir(outputFolder):
                 if singlets.endswith(".cap.singlets"):
-            #if os.path.exists(singlets):
+
                     cat_command = f"cat {os.path.join(outputFolder,contigs)} {os.path.join(outputFolder,singlets)} >> {os.path.join(outputFolder, f'{sample}_merged.fasta')}"
                     print(cat_command)
                     subprocess.run(cat_command, shell=True, check=True)
-                # O resultado é o arquivo sample_merged.fasta + o arquivo .fasta original
+                    # O resultado é o arquivo sample_merged.fasta + o arquivo .fasta original
     
     
     log_files = [os.path.join(outputFolder, file) for file in os.listdir(outputFolder)
                  if file.endswith((".links",".qual",".info",".contigs",".singlets",".ace"))]
     for log_file in log_files:
         os.remove(log_file)
-    for fasta in os.listdir(outputFolder):
-        
-
-seq = "mycontigs.fasta"
-folder = "test"
-cap3(seq,folder)
-
+    # Remover arquivo original da pasta
+    os.remove(os.path.join(outputFolder,inputContig))
+    
 #def diamond(): 
 
 #def processDmndOut():
