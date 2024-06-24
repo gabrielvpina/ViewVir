@@ -64,9 +64,9 @@ diamondTable(viralDB,vvfolder)
 
 processDmndOut(vvfolder)
 
-process_diamondTbl(dmndtable,vvfolder)
+viralFilter(vvfolder)
 
-# Criar Orfs
+######################################## Criar Orfs ########################################
 findorf(vvfolder)
 
 # Processing ORFs
@@ -81,3 +81,4 @@ scatterPlot(vvfolder)
 
 if interpro != "None":
     interpro(vvfolder,interpro_path,CPU)
+
