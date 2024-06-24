@@ -1,4 +1,5 @@
 import os
+import glob
 from Bio import SeqIO
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from bokeh.resources import CDN
@@ -7,6 +8,15 @@ from bokeh.plotting import figure
 from bokeh.layouts import column
 
 # Função para parsear os arquivos FASTA de ORFs para diferentes códigos genéticos
+def find_orf_files(suffixes):
+    orf_fasta_files = []
+    for suffix in suffixes:
+        files = glob.glob(f"*{suffix}")
+        if files:
+            orf_fasta_files.append((files[0], f"Genetic Code {suffix.split('gc')[1].split('.')[0]}"))
+    return orf_fasta_files
+
+
 def parse_orf_fastas(file_paths):
     orf_data_by_contig = {}
     for file_path, code in file_paths:
@@ -123,7 +133,10 @@ def create_graphics(output_file, orf_data_by_contig, nuc_data):
                     </html>""")
 
 # Função principal
-def main(orf_fasta_files, nuc_fasta_file, output_file):
+def main(nuc_fasta_file, output_file, suffixes):
+    # Encontrar arquivos ORF FASTA com os sufixos especificados
+    orf_fasta_files = find_orf_files(suffixes)
+
     # Verificar se os arquivos fasta de ORFs existem
     for file_path, code in orf_fasta_files:
         if not os.path.isfile(file_path):
@@ -134,24 +147,20 @@ def main(orf_fasta_files, nuc_fasta_file, output_file):
         return
 
     # Parsear arquivos fasta de ORFs para diferentes códigos genéticos e contigs
-    orf_data_by_contig = parse_orf_fastas(orf_fasta_files)
+    orf_data_by_code = parse_orf_fastas(orf_fasta_files)
 
     print("Parsing nucleotide FASTA file...")
     nuc_data = parse_nuc_fasta(nuc_fasta_file)
     print(f"Found {len(nuc_data)} nucleotide sequences.")
 
     print("Creating graphics and writing to HTML file...")
-    create_graphics(output_file, orf_data_by_contig, nuc_data)
+    create_graphics(output_file, orf_data_by_code, nuc_data)
     print(f"Plots saved in {output_file}")
 
-# Caminhos para os arquivos FASTA de ORFs e o arquivo HTML de saída
-orf_fasta_files = [
-    ('teste_ORFgc1.fasta', 'Genetic Code 01'),
-    ('teste_ORFgc5.fasta', 'Genetic Code 05'),
-    ('teste_ORFgc11.fasta', 'Genetic Code 11')
-]
+# Sufixos dos arquivos FASTA de ORFs e o arquivo HTML de saída
+suffixes = ['_ORFgc1.fasta', '_ORFgc5.fasta', '_ORFgc11.fasta']
 nuc_fasta_file = 'teste_nonDNA.fasta'
 output_file = 'orf_plots.html'
 
 # Executa a função principal
-main(orf_fasta_files, nuc_fasta_file, output_file)
+main(nuc_fasta_file, output_file, suffixes)
