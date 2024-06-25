@@ -10,12 +10,23 @@ ViewVir utilizes data from the International Committee on Taxonomy of Viruses (I
 - Master Species Lists [(MSL)](https://ictv.global/msl)
 - [NCBI Virus](https://www.ncbi.nlm.nih.gov/labs/virus/vssi/
 
+# Usage
+- `--help`: Show all options;
+- `-in` or `--input`: Fasta with non-host contigs;
+- `-out` or `--outdir`: Name of the output directory (creates a new if doesn't exist);
+- `-vir` or `--viralDB`: Diamond database (.dmnd file) for blastx in diamond;
+- `-scan` or `--interproscan`: Interproscan executable path (/path/to/interproscan/./interproscan.sh);
+- `-cpu`: CPU usage <int>;
+- `-norf` or `--numORFs`: <int> Number of ORFs selected;
 
+## Example of usage
+
+```
+python ViewVir.py -in mycontigs.fasta -cpu 4 -norf 3 -vir viralDB.dmnd -scan /my/path/interproscan/./interproscan.sh -out teste
+
+```
 # ViewVir Output
-
-
-ViewVir output files are located in the `ViewVir-results` folder. Within this folder, each submitted sample is represented by a folder named based in the input sample.
-
+ViewVir output files are located in the `--output` folder.
 General Outputs
 - Fasta of potential non-DNA viral sequences;
 - Fasta files of longest ORFs in genetic code 1,5 and 11;
