@@ -6,6 +6,7 @@ from dna_features_viewer import GraphicFeature, GraphicRecord
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 from bokeh.plotting import figure
+from bokeh.models import HoverTool
 
 def generate_orf_plots(input_dir, output_file, suffixes):
     # Função para encontrar arquivos FASTA com sufixos específicos no diretório dado
