@@ -22,7 +22,8 @@ ViewVir utilizes data from the International Committee on Taxonomy of Viruses (I
 ## Example of usage
 
 ```
-python ViewVir.py -in mycontigs.fasta -cpu 4 -norf 3 -vir viralDB.dmnd -scan /my/path/interproscan/./interproscan.sh -out teste
+python ViewVir.py -in mycontigs.fasta -cpu 4 -norf 3 -vir viralDB.dmnd \
+-scan /my/path/interproscan/./interproscan.sh -out teste
 
 ```
 # ViewVir Output
