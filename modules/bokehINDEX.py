@@ -1,5 +1,6 @@
 import os
 import glob
+import csv
 from Bio import SeqIO
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from bokeh.resources import CDN
@@ -74,8 +75,36 @@ def generate_orf_plots(input_dir, output_file, suffixes):
             nuc_data[record.id] = str(record.seq)
         return nuc_data
 
+    # Função para processar os arquivos CDD
+    def parse_cdd_files(input_dir):
+        cdd_data = {}
+        cdd_suffixes = ['_ORFgc1_CDD.tsv', '_ORFgc5_CDD.tsv', '_ORFgc11_CDD.tsv']
+        for suffix in cdd_suffixes:
+            files = glob.glob(os.path.join(input_dir, f"*{suffix}"))
+            for file in files:
+                with open(file, 'r') as f:
+                    reader = csv.reader(f, delimiter='\t')
+                    for row in reader:
+                        orf_name = row[0]
+                        database = row[3]
+                        domain_code = row[4]
+                        domain_name = row[5]
+                        e_value = row[8]
+
+                        # Filtro para remover linhas com '-' e selecionar apenas certos bancos de dados
+                        if domain_name != '-' and e_value != '-' and database in ['CDD', 'Pfam', 'SUPERFAMILY']:
+                            if orf_name not in cdd_data:
+                                cdd_data[orf_name] = []
+                            cdd_data[orf_name].append({
+                                'database': database,
+                                'domain_code': domain_code,
+                                'domain_name': domain_name,
+                                'e_value': e_value
+                            })
+        return cdd_data
+
     # Função para criar gráficos e gerar arquivo HTML para cada código genético por contig
-    def create_graphics(output_file, orf_data_by_code, nuc_data):
+    def create_graphics(output_file, orf_data_by_code, nuc_data, cdd_data):
         output_file = os.path.join(input_dir,output_file)
         html_content = []
         index_content = []
@@ -92,7 +121,15 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                 for orf in orfs:
                     strand = 1 if orf['strand'] == '+' else -1
                     color = "#ffcccc" if strand == 1 else "#ccccff"
-                    label = f"{orf['contig_full']}: {orf['start']}-{orf['end']} ({orf['strand']}) \n Codons: start {orf['start_codon']}, stop {orf['stop_codon']}"
+                    
+                    label = f"{orf['contig_full']}: {orf['start']}-{orf['end']} ({orf['strand']})<br>Codons: start {orf['start_codon']}, stop {orf['stop_codon']}"
+
+                    # Adicionar informações CDD ao label se existirem
+                    if orf['contig_full'] in cdd_data:
+                        cdd_info = cdd_data[orf['contig_full']]
+                        for cdd in cdd_info:
+                            label += f"<br>{cdd['database']}: {cdd['domain_code']} {cdd['domain_name']} (e-value: {cdd['e_value']})"
+
                     feature = GraphicFeature(start=orf['start'], end=orf['end'], strand=strand, color=color, label=label)
                     features.append(feature)
                 
@@ -122,7 +159,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                         }}
                         .container {{
                             max-width: 800px;
-                            padding: 140px;
+                            padding: 20px;
                             text-align: center;
                         }}
                         .index {{
@@ -133,7 +170,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                         </head>
                         <body>
                         <div class="container">
-                        <h1>Index</h1>
+                        <h1>Índice de Contigs</h1>
                         <ul class="index">{"".join(index_content)}</ul>
                         <br><br>
                         {''.join(html_content)}
@@ -164,17 +201,13 @@ def generate_orf_plots(input_dir, output_file, suffixes):
     # Parsear arquivos fasta de ORFs para diferentes códigos genéticos e contigs
     orf_data_by_code = parse_orf_fastas(orf_fasta_files)
 
+    # Parsear arquivos CDD
+    cdd_data = parse_cdd_files(input_dir)
+
     print("Parsing nucleotide FASTA file...")
     nuc_data = parse_nuc_fasta(nuc_fasta_file)
     print(f"Found {len(nuc_data)} nucleotide sequences.")
 
     print("Creating graphics and writing to HTML file...")
-    create_graphics(output_file, orf_data_by_code, nuc_data)
+    create_graphics(output_file, orf_data_by_code, nuc_data, cdd_data)
     print(f"Plots saved in {output_file}")
-
-# Exemplo de uso da função
-#input_dir = 'path/to/your/fasta/files'
-#suffixes = ['_ORFgc1.fasta', '_ORFgc5.fasta', '_ORFgc11.fasta']
-#output_file = 'orf_plots.html'
-
-#generate_orf_plots(input_dir, output_file, suffixes)
