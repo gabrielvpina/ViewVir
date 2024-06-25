@@ -171,7 +171,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                         </head>
                         <body>
                         <div class="container">
-                        <h1>Índice de Contigs</h1>
+                        <h1>Index</h1>
                         <ul class="index">{"".join(index_content)}</ul>
                         <br><br>
                         {''.join(html_content)}
