@@ -5,8 +5,6 @@ from Bio import SeqIO
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from bokeh.resources import CDN
 from bokeh.embed import file_html
-from bokeh.plotting import figure
-from bokeh.models import HoverTool
 
 def generate_orf_plots(input_dir, output_file, suffixes):
     # Função para encontrar arquivos FASTA com sufixos específicos no diretório dado
@@ -59,13 +57,10 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                     'code': code
                 }
                 
-                if code not in orf_data_by_code:
-                    orf_data_by_code[code] = {}
+                if contig not in orf_data_by_code:
+                    orf_data_by_code[contig] = []
                 
-                if contig not in orf_data_by_code[code]:
-                    orf_data_by_code[code][contig] = []
-                
-                orf_data_by_code[code][contig].append(orf)
+                orf_data_by_code[contig].append(orf)
         
         return orf_data_by_code
 
@@ -104,22 +99,18 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                             })
         return cdd_data
 
-    # Função para criar gráficos e gerar arquivo HTML para cada código genético por contig
+    # Função para criar gráficos e gerar arquivo HTML para cada contig com todos os códigos genéticos
     def create_graphics(output_file, orf_data_by_code, nuc_data, cdd_data):
-        output_file = os.path.join(input_dir,output_file)
+        output_file = os.path.join(input_dir, output_file)
         html_content = []
-        index_content = []
-        
-        for code_index, (code, orf_data_by_contig) in enumerate(orf_data_by_code.items(), start=1):
-            index_content.append(f"<h2>{code}</h2>")
-            first_contig_anchor = None
-            
-            for contig_index, (contig, orfs) in enumerate(orf_data_by_contig.items(), start=1):
-                if contig_index == 1:
-                    first_contig_anchor = f"contig_{code_index}_{contig_index}"
-                
+
+        for contig, orfs in orf_data_by_code.items():
+            for suffix in suffixes:
                 features = []
+                code = f"Genetic Code {suffix.split('gc')[1].split('.')[0]}"
                 for orf in orfs:
+                    if orf['code'] != code:
+                        continue
                     strand = 1 if orf['strand'] == '+' else -1
                     color = "#ffcccc" if strand == 1 else "#ccccff"
                     
@@ -133,18 +124,17 @@ def generate_orf_plots(input_dir, output_file, suffixes):
 
                     feature = GraphicFeature(start=orf['start'], end=orf['end'], strand=strand, color=color, label=label)
                     features.append(feature)
-                
-                sequence_length = len(nuc_data[contig])
-                record = GraphicRecord(sequence_length=sequence_length, features=features)
-                plot = record.plot_with_bokeh(figure_width=15)
-                plot_html = file_html(plot, CDN, f"Contig: {contig} - Code: {code}")
-                
-                html_content.append(f"<h3 id='contig_{code_index}_{contig_index}'>Contig: {contig} - Code: {code}</h3>")
-                html_content.append(plot_html)
-
-                print(f"Generated HTML for contig {contig}, code {code}, length: {len(plot_html)}")
             
-            index_content.append(f"<li><a href='#contig_{code_index}_1'>{code} Contigs</a></li>")
+                if features:
+                    sequence_length = len(nuc_data[contig])
+                    record = GraphicRecord(sequence_length=sequence_length, features=features)
+                    plot = record.plot_with_bokeh(figure_width=15)
+                    plot_html = file_html(plot, CDN, f"Contig: {contig} - Code: {code}")
+
+                    html_content.append(f"<h3>Contig: {contig} - Code: {code}</h3>")
+                    html_content.append(plot_html)
+
+                    print(f"Generated HTML for contig {contig}, code {code}, length: {len(plot_html)}")
         
         with open(output_file, "w") as f:
             f.write(f"""<!DOCTYPE html>
@@ -163,17 +153,10 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                             padding: 20px;
                             text-align: center;
                         }}
-                        .index {{
-                            text-align: left;
-                            margin-bottom: 20px;
-                        }}
                         </style>
                         </head>
                         <body>
                         <div class="container">
-                        <h1>Index</h1>
-                        <ul class="index">{"".join(index_content)}</ul>
-                        <br><br>
                         {''.join(html_content)}
                         </div>
                         </body>
