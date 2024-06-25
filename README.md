@@ -1,6 +1,6 @@
 # ViewVir
 
-ViewVir is a simple pipeline created for the visualization and analysis of viral sequences in metatranscriptomics data. The initial input required to run the pipeline is the `non-Host contig`. ViewVir relies on Diamond Aligner and InterproScan analysis and utilizes interactive Plotly and DNA Features Viewer graphics for result visualization.
+ViewVir is a pipeline designed to characterize and visualize potential viral contigs of non DNA viruses in RNA-seq samples. The input for the tool is a fasta file of pre-assembled contigs. The analysis performed by ViewVir depends on pre-installed tools such as CAP3, ORFipy, and Diamond. Additionally, it can be integrated with the local machine's InterProScan.
 
 For more detailed information, please refer to the [Wiki page](https://github.com/gabrielvpina/ViewVir/wiki).
 
