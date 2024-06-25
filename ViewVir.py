@@ -17,11 +17,13 @@ allVirus = pd.concat([ncbiNames, ncbiSpecie])
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-in","--input", type=str, help="Fasta with contigs")
+parser.add_argument("-in","--input", type=str, help="Fasta with non-host contigs")
 parser.add_argument("-out","--outdir", type=str, help="Output directory name")
-parser.add_argument("-vir","--viralDB",type=str, help=".dmnd file for diamond blastx")
-parser.add_argument("-scan","--interproscan", type=str, help="Interproscan executable path")
-parser.add_argument("-cpu","--cpu", type=int, help="CPU for interproscan")
+parser.add_argument("-vir","--viralDB",type=str, help="Diamond database (.dmnd)")
+parser.add_argument("-scan","--interproscan", type=str, help="Interproscan executable path -> /path/to/interproscan/./interproscan.sh")
+parser.add_argument("-cpu","--cpu", type=int, help="CPU usage <int>")
+parser.add_argument("-norf","--numORFs",type=int, help="Number of biggest ORFs selected")
+
 args = parser.parse_args()
 
 ########################### INPUT ###########################
@@ -50,6 +52,10 @@ viralDB = str(args.viralDB)
 if viralDB == "None":
     print("Please select .dmnd file")
 
+# Number of orfs
+nORF = str(args.numORFs)
+if nORF == 0:
+    nORF = 2
 
 
 ######################################## Processando contigs ##############################
@@ -61,7 +67,7 @@ renameFasta(vvfolder)
 
 ######################################## Processando diamond ##############################
 
-diamondTable(viralDB,vvfolder)
+diamondTable(viralDB,vvfolder,CPU)
 
 processDmndOut(vvfolder)
 
@@ -71,9 +77,9 @@ viralFilter(vvfolder)
 findorf(vvfolder)
 
 # Processing ORFs
-gc1_ORFs(vvfolder)
-gc5_ORFs(vvfolder)
-gc11_ORFs(vvfolder)
+gc1_ORFs(vvfolder,nORF)
+gc5_ORFs(vvfolder,nORF)
+gc11_ORFs(vvfolder,nORF)
 
 # Scatter Plot
 scatterPlot(vvfolder)
@@ -88,9 +94,4 @@ suffixes = ['_ORFgc1.fasta', '_ORFgc5.fasta', '_ORFgc11.fasta']
 output_file = 'orf_plots.html'
 
 generate_orf_plots(vvfolder, output_file, suffixes)
-
-
-
-
-
 
