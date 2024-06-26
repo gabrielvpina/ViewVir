@@ -14,10 +14,10 @@ ViewVir utilizes data from the International Committee on Taxonomy of Viruses (I
 - `--help`: Show all options;
 - `-in` or `--input`: Fasta with non-host contigs;
 - `-out` or `--outdir`: Name of the output directory (creates a new if doesn't exist);
-- `-vir` or `--viralDB`: Diamond database (.dmnd file) for blastx in diamond;
+- `-vir` or `--viralDB`: RefSeq Viral Release in formatted Diamond database (.dmnd file) for blastx in diamond;
 - `-scan` or `--interproscan`: Interproscan executable path (/path/to/interproscan/./interproscan.sh);
-- `-cpu`: CPU usage <int>;
-- `-norf` or `--numORFs`: <int> Number of ORFs selected;
+- `-cpu`: CPU usage (int);
+- `-norf` or `--numORFs`: Number of ORFs selected (int);
 
 ## Example of usage
 
@@ -29,12 +29,12 @@ python ViewVir.py -in mycontigs.fasta -cpu 4 -norf 3 -vir viralDB.dmnd \
 # ViewVir Output
 ViewVir output files are located in the `--output` folder.
 General Outputs
-- Fasta of potential non-DNA viral sequences;
-- Fasta files of longest ORFs in genetic code 1,5 and 11;
-- Formatted diamond Table (.tsv)
-- Interproscan tables of potential non-DNA viral ORFs;
-- Interactive Bubble Plot (HTML)
-- Interactive ORF viewer;
+- Fasta of potential non-DNA viral sequences (nt);
+- Fasta files of longest ORFs in genetic code 1,5 and 11 (AA);
+- Formatted diamond Table (.tsv);
+- Interproscan tables of potential non-DNA viral ORFs (.tsv);
+- Interactive Bubble Plot (HTML);
+- Interactive ORF viewer (HTML);
 
 ![alt text](https://github.com/gabrielvpina/my_images/blob/main/vvscreen.png)
 
