@@ -17,7 +17,7 @@ def scatterPlot(outputFolder):
     inputfile["Genome.composition"] = inputfile["Genome.composition"].fillna("NA")
 
     fig = px.scatter(inputfile, x="QseqLength", y="MatchSequence", size="QCover", color="Genome.composition",
-                     hover_data=["Pident", "Evalue"])
+                     hover_data=["Pident", "Evalue","QuerySeq"])
     fig.update_yaxes(showticklabels=False)
     fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title='ViewVir interactive scatter plot')
 
