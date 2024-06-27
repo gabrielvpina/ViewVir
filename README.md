@@ -5,7 +5,7 @@ ViewVir is a pipeline designed to characterize and visualize potential viral con
 For more detailed information, please refer to the [Wiki page](https://github.com/gabrielvpina/ViewVir/wiki).
 
 ## Viral Data Source
-ViewVir utilizes data from the International Committee on Taxonomy of Viruses (ICTV) and NCBI to obtain the genomic composition of each virus. However, this information may be outdated. The ICTV sources utilized by ViewVir are:
+ViewVir utilizes data from the International Committee on Taxonomy of Viruses (ICTV) and NCBI to obtain the genomic composition of each virus. The sources utilized by ViewVir are:
 - Virus Metadata Feature [(VMF)](https://ictv.global/vmf)
 - Master Species Lists [(MSL)](https://ictv.global/msl)
 - [NCBI Virus](https://www.ncbi.nlm.nih.gov/labs/virus/vssi/)
