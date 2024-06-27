@@ -8,7 +8,7 @@ For more detailed information, please refer to the [Wiki page](https://github.co
 ViewVir utilizes data from the International Committee on Taxonomy of Viruses (ICTV) and NCBI to obtain the genomic composition of each virus. However, this information may be outdated. The ICTV sources utilized by ViewVir are:
 - Virus Metadata Feature [(VMF)](https://ictv.global/vmf)
 - Master Species Lists [(MSL)](https://ictv.global/msl)
-- [NCBI Virus](https://www.ncbi.nlm.nih.gov/labs/virus/vssi/
+- [NCBI Virus](https://www.ncbi.nlm.nih.gov/labs/virus/vssi/)
 
 # Usage
 - `--help`: Show all options;
