@@ -27,14 +27,14 @@ python ViewVir.py -in mycontigs.fasta -cpu 4 -norf 3 -vir viralDB.dmnd \
 
 ```
 # ViewVir Output
-ViewVir output files are located in the `--output` folder.
+ViewVir output files are located in the `--outdir` folder.
 General Outputs
-- Fasta of potential non-DNA viral sequences (nt);
+- Fasta file of potential non-DNA viral sequences (nt);
 - Fasta files of longest ORFs in genetic code 1,5 and 11 (AA);
 - Formatted diamond Table (.tsv);
-- Interproscan tables of potential non-DNA viral ORFs (.tsv);
-- Interactive Bubble Plot (HTML);
-- Interactive ORF viewer (HTML);
+- Interproscan tables of potential non-DNA viral ORFs Conserved Domains (.tsv);
+- Interactive Scatter Plot of Diamond results (HTML);
+- Interactive ORF viewer (HTML) with conserved domains;
 
 ![alt text](https://github.com/gabrielvpina/my_images/blob/main/vvscreen.png)
 
