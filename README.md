@@ -1,4 +1,4 @@
-<img src="https://github.com/gabrielvpina/my_images/blob/main/roundvir.png" width="100" height="100">
+<img src="https://github.com/gabrielvpina/my_images/blob/main/roundvir.png" width="200" height="200">
 
 # ViewVir
 
