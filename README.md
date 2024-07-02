@@ -1,4 +1,4 @@
-<img src="https://github.com/gabrielvpina/my_images/blob/main/text36800.png" width="380" height="200">
+<img src="https://github.com/gabrielvpina/my_images/blob/main/text36800.png" width="370" height="200">
 
 # ViewVir
 
