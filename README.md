@@ -2,19 +2,13 @@
 
 <div align="center">
 
-[<img src="https://github.com/gabrielvpina/my_images/blob/main/bitmap.png" width="360" height="200">
+<img src="https://github.com/gabrielvpina/my_images/blob/main/bitmap.png" width="360" height="200">
 
   <h1 align="center">ViewVir</h1>
   
   <p align="center">
-    <strong>Hydra is a game launcher with its own embedded bittorrent client and a self-managed repack scraper.</strong>
+    <strong>ViewVir: A pipeline for viral diversity analysis</strong>
   </p>
-
-
-
-
-
-12<img src="https://github.com/gabrielvpina/my_images/blob/main/bitmap.png" width="360" height="200">
 
 ViewVir is a pipeline designed to characterize and visualize potential viral contigs of non DNA viruses in RNA-seq samples. The input for the tool is a fasta file of pre-assembled contigs. The analysis performed by ViewVir depends on pre-installed tools such as [CAP3](https://faculty.sites.iastate.edu/xqhuang/cap3-and-pcap-sequence-and-genome-assembly-programs), [ORFipy](https://github.com/urmi-21/orfipy), and [Diamond](https://github.com/bbuchfink/diamond). Additionally, it can be integrated with the local machine's [InterProScan](https://github.com/ebi-pf-team/interproscan) and BLAST.
 
