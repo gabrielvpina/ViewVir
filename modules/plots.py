@@ -74,8 +74,7 @@ def scatterPlot(outputFolder):
         if plot_file.endswith("_nonDNA.tsv"):
             inputfile_path = os.path.join(outputFolder, plot_file)
             inputfile = pd.read_csv(inputfile_path, sep='\t')
-            break  # Processa apenas o primeiro arquivo encontrado
-
+            break  
    
     inputfile["MatchSequence"] = inputfile["Species"] + " --> " + inputfile["SubjTitle"]
     inputfile["Genome.composition"] = inputfile["Genome.composition"].fillna("NA")
