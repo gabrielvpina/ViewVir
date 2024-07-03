@@ -10,10 +10,10 @@ from modules.contigProcess import cap3,diamondTable,processDmndOut
 from modules.bokehINDEX import generate_orf_plots
 from modules.makeblast import blastn,blastx
 
-# Importando dados
+# import data
 ncbiSpecie = pd.read_csv("data/NCBI_virSpecies.csv", names=["Species", "Genome.composition"])
 ncbiNames = pd.read_csv("data/NCBI_virName.csv", names=["Species", "Genome.composition"])
-# Merge de todas as tabelas
+# merge tables
 allVirus = pd.concat([ncbiNames, ncbiSpecie])
 
 
@@ -70,7 +70,7 @@ blastx_database = str(args.blastx)
 # Assembly contigs
 cap3(inputContig,vvfolder)
 
-# Renomear arquivo fasta original
+# rename original fasta
 renameFasta(vvfolder)
 
 ######################################## Processando diamond ##############################
