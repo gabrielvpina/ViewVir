@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="https://github.com/gabrielvpina/my_images/blob/main/bitmap.png" width="360" height="200">
+<img src="https://github.com/gabrielvpina/my_images/blob/main/roundlogo.png" width="200" height="200">
 
   <h1 align="center">ViewVir</h1>
   
