@@ -87,7 +87,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                         domain_name = row[5]
                         e_value = row[8]
 
-                        # Filtro para remover linhas com '-' e selecionar apenas certos bancos de dados
+                        # remove blank cells
                         if domain_name != '-' and e_value != '-' and database in ['CDD', 'Pfam', 'SUPERFAMILY']:
                             if orf_name not in cdd_data:
                                 cdd_data[orf_name] = []
