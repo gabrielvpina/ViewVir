@@ -7,7 +7,7 @@ from bokeh.resources import CDN
 from bokeh.embed import file_html
 
 def generate_orf_plots(input_dir, output_file, suffixes):
-    # Função para encontrar arquivos FASTA com sufixos específicos no diretório dado
+    # find fasta files with suffix
     def find_orf_files(suffixes):
         orf_fasta_files = []
         for suffix in suffixes:
@@ -16,7 +16,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                 orf_fasta_files.append((files[0], f"Genetic Code {suffix.split('gc')[1].split('.')[0]}"))
         return orf_fasta_files
 
-    # Função para parsear os arquivos FASTA de ORFs para diferentes códigos genéticos
+    # parse different genetic codes
     def parse_orf_fastas(file_paths):
         orf_data_by_code = {}
         for file_path, code in file_paths:
@@ -64,14 +64,14 @@ def generate_orf_plots(input_dir, output_file, suffixes):
         
         return orf_data_by_code
 
-    # Função para parsear o arquivo FASTA de nucleotídeos
+    
     def parse_nuc_fasta(file_path):
         nuc_data = {}
         for record in SeqIO.parse(file_path, "fasta"):
             nuc_data[record.id] = str(record.seq)
         return nuc_data
 
-    # Função para processar os arquivos CDD
+    # parse interproscan files
     def parse_cdd_files(input_dir):
         cdd_data = {}
         cdd_suffixes = ['_ORFgc1_CDD.tsv', '_ORFgc5_CDD.tsv', '_ORFgc11_CDD.tsv']
@@ -99,7 +99,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                             })
         return cdd_data
 
-    # Função para criar gráficos e gerar arquivo HTML para cada contig com todos os códigos genéticos
+    # create ORF graphic for each genetic code
     def create_graphics(output_file, orf_data_by_code, nuc_data, cdd_data):
         output_file = os.path.join(input_dir, output_file)
         html_content = []
@@ -162,16 +162,16 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                         </body>
                         </html>""")
 
-    # Encontrar arquivos ORF FASTA com os sufixos especificados
+    # find orfs fasta
     orf_fasta_files = find_orf_files(suffixes)
 
-    # Verificar se os arquivos fasta de ORFs existem
+    # debugs
     for file_path, code in orf_fasta_files:
         if not os.path.isfile(file_path):
             print(f"Error: ORF FASTA file '{file_path}' for code '{code}' not found.")
             return
 
-    # Encontrar o arquivo FASTA de nucleotídeos no diretório especificado
+    
     nuc_fasta_file = None
     for nuc in os.listdir(input_dir):
         if nuc.endswith("_nonDNA.fasta"):
@@ -182,10 +182,10 @@ def generate_orf_plots(input_dir, output_file, suffixes):
         print(f"Error: Nucleotide FASTA file not found in the specified directory.")
         return
 
-    # Parsear arquivos fasta de ORFs para diferentes códigos genéticos e contigs
+    # parse fasta files of all codes
     orf_data_by_code = parse_orf_fastas(orf_fasta_files)
 
-    # Parsear arquivos CDD
+    # parse CDD files
     cdd_data = parse_cdd_files(input_dir)
 
     print("Parsing nucleotide FASTA file...")
