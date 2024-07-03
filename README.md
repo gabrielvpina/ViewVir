@@ -38,5 +38,5 @@ General Outputs
 - Interactive Scatter Plot of Diamond results (HTML);
 - Interactive ORF viewer (HTML) with conserved domains;
 
-![alt text](https://github.com/gabrielvpina/my_images/blob/main/vvscreen.png)
+![alt text](https://github.com/gabrielvpina/my_images/blob/main/vvscreen2.png)
 
