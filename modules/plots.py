@@ -5,28 +5,28 @@ from plotly.offline import plot
 from dna_features_viewer import GraphicFeature,GraphicRecord
 
 def scatterPlotBLAST(outputFolder):
-    # acha o arquivo processado
+    # find files
     for plot_file in os.listdir(outputFolder):
         if plot_file.endswith("_nonDNA.tsv"):
             inputfile_path = os.path.join(outputFolder, plot_file)
             inputfile = pd.read_csv(inputfile_path, sep='\t')
-            break  # Processa apenas o primeiro arquivo encontrado
+            break 
 
-    # tabela vinda do BLASTn
+    # blastn table
     for blasttable in os.listdir(outputFolder):
         if blasttable.endswith("_blastn.tsv"):
             inputblast_path = os.path.join(outputFolder,blasttable)
             inputblast = pd.read_csv(inputblast_path, sep='\t')
             break
 
-    # tabela vinda do BLASTx
+    # blastx table
     for blastxtable in os.listdir(outputFolder):
         if blastxtable.endswith("_blastx.tsv"):
             inputblastx_path = os.path.join(outputFolder,blastxtable)
             inputblastx = pd.read_csv(inputblastx_path, sep='\t')
             break
 
-    # texto principal
+    # merge text
     inputfile["MatchSequence"] = inputfile["Species"] + " --> " + inputfile["SubjTitle"]
 
     ################### BLASTn
@@ -60,23 +60,23 @@ def scatterPlotBLAST(outputFolder):
     fig.update_yaxes(showticklabels=False)
     fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title='ViewVir interactive scatter plot')
 
-    # Definição do nome do arquivo de saída
+    # out files
     pltname = os.path.join(outputFolder, "scatterPlot.html")
     plot(fig, filename=pltname, auto_open=False)
 
-    # Tabela de curadoria manual
+    # final table
     csv_output_path = os.path.join(outputFolder, "ViewVir-blasts_table.csv")
     inputfile.to_csv(csv_output_path, index=False)
 
 def scatterPlot(outputFolder):
-    # Localiza o arquivo correto
+    
     for plot_file in os.listdir(outputFolder):
         if plot_file.endswith("_nonDNA.tsv"):
             inputfile_path = os.path.join(outputFolder, plot_file)
             inputfile = pd.read_csv(inputfile_path, sep='\t')
             break  # Processa apenas o primeiro arquivo encontrado
 
-    # Gráfico Interativo
+   
     inputfile["MatchSequence"] = inputfile["Species"] + " --> " + inputfile["SubjTitle"]
     inputfile["Genome.composition"] = inputfile["Genome.composition"].fillna("NA")
 
@@ -85,7 +85,7 @@ def scatterPlot(outputFolder):
     fig.update_yaxes(showticklabels=False)
     fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title='ViewVir interactive scatter plot')
 
-    # Definição do nome do arquivo de saída
+    
     pltname = os.path.join(outputFolder, "scatterPlot.html")
     plot(fig, filename=pltname, auto_open=False)
 
