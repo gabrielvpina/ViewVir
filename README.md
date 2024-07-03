@@ -16,6 +16,8 @@ ViewVir utilizes data from the International Committee on Taxonomy of Viruses (I
 - `-out` or `--outdir`: Name of the output directory (creates a new if doesn't exist);
 - `-vir` or `--viralDB`: RefSeq Viral Release in formatted Diamond database (.dmnd file) for blastx in diamond;
 - `-scan` or `--interproscan`: Interproscan executable path (/path/to/interproscan/./interproscan.sh);
+- `-N` or `--blastn`: BLASTn database path;
+- `-X` or `--blastx`: BLASTx database path;
 - `-cpu`: CPU usage (int);
 - `-norf` or `--numORFs`: Number of ORFs selected (int);
 
@@ -37,6 +39,7 @@ General Outputs
 - Interproscan tables of potential non-DNA viral ORFs Conserved Domains (.tsv);
 - Interactive Scatter Plot of Diamond results (HTML);
 - Interactive ORF viewer (HTML) with conserved domains;
+- BLASTn and BLASTx table (.tsv).
 
 ![alt text](https://github.com/gabrielvpina/my_images/blob/main/vvscreen2.png)
 
