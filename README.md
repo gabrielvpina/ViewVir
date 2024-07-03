@@ -22,9 +22,11 @@ ViewVir utilizes data from the International Committee on Taxonomy of Viruses (I
 ## Example of usage
 
 ```
-python ViewVir.py -in mycontigs.fasta -cpu 4 -norf 3 -vir viralDB.dmnd \
--scan /my/path/interproscan/./interproscan.sh -out test
-
+python ViewVir.py -in mycontigs.fasta -cpu 4 -vir viralDB.dmnd \
+-scan /path/to/interproscan/./interproscan.sh \
+--blastn /path/to/blastnDATABASE/viral_nuc.fna \
+--blastx /path/to/blastxDATABASE/viral_protein.faa \
+-norf 2 -out teste
 ```
 # ViewVir Output
 ViewVir output files are located in the `--outdir` folder.
