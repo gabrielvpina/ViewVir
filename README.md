@@ -28,7 +28,7 @@ python ViewVir.py -in mycontigs.fasta -cpu 4 -vir viralDB.dmnd \
 -scan /path/to/interproscan/./interproscan.sh \
 --blastn /path/to/blastnDATABASE/viral_nuc.fna \
 --blastx /path/to/blastxDATABASE/viral_protein.faa \
--norf 2 -out teste
+-norf 2 -out ResultDir
 ```
 # ViewVir Output
 ViewVir output files are located in the `--outdir` folder.
