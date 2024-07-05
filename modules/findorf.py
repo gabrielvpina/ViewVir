@@ -13,22 +13,22 @@ def findorf(outputFolder):
         nome = os.path.basename(nonDNA_file).replace("_nonDNA.fasta", "")
         saida = outputFolder
 
-        # run orfipy - genetic code 01
-        orfipy_gc1 = ["orfipy","--table", "1", "--outdir", saida, entrada, "--pep", f"{nome}_ORFgc1.fasta"]
+        # Executa orfipy - genetic code 01
+        orfipy_gc1 = ["orfipy","--partial-3","--partial-5","--table", "1", "--outdir", saida, entrada, "--pep", f"{nome}_ORFgc1.fasta"]
 
         subprocess.run(orfipy_gc1, check=True)
 
-        # run orfipy - genetic code 05
-        orfipy_gc5 = ["orfipy", "--table", "5", "--outdir", saida, entrada, "--pep",  f"{nome}_ORFgc5.fasta"]
+        # Executa orfipy - genetic code 05
+        orfipy_gc5 = ["orfipy","--partial-3","--partial-5", "--table", "5", "--outdir", saida, entrada, "--pep",  f"{nome}_ORFgc5.fasta"]
 
         subprocess.run(orfipy_gc5, check=True)
 
-        # run orfipy - genetic code 11
-        orfipy_gc11 = ["orfipy", "--table", "11", "--outdir", saida, entrada, "--pep",  f"{nome}_ORFgc11.fasta"]
+        # Executa orfipy - genetic code 11
+        orfipy_gc11 = ["orfipy","--partial-3","--partial-5", "--table", "11", "--outdir", saida, entrada, "--pep",  f"{nome}_ORFgc11.fasta"]
 
         subprocess.run(orfipy_gc11, check=True)
 
-        # remove .log
+        # Remove arquivos .log
         log_files = [os.path.join(outputFolder, file) for file in os.listdir(outputFolder) if file.endswith(".log")]
         for log_file in log_files:
             os.remove(log_file)
