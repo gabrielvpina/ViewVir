@@ -5,30 +5,31 @@ from plotly.offline import plot
 from dna_features_viewer import GraphicFeature,GraphicRecord
 
 def scatterPlotBLAST(outputFolder):
-    # find files
+    # acha o arquivo processado
     for plot_file in os.listdir(outputFolder):
         if plot_file.endswith("_nonDNA.tsv"):
             inputfile_path = os.path.join(outputFolder, plot_file)
             inputfile = pd.read_csv(inputfile_path, sep='\t')
-            break 
+            break  # Processa apenas o primeiro arquivo encontrado
 
-    # blastn table
+    # tabela vinda do BLASTn
     for blasttable in os.listdir(outputFolder):
         if blasttable.endswith("_blastn.tsv"):
             inputblast_path = os.path.join(outputFolder,blasttable)
             inputblast = pd.read_csv(inputblast_path, sep='\t')
             break
 
-    # blastx table
+    # tabela vinda do BLASTx
     for blastxtable in os.listdir(outputFolder):
         if blastxtable.endswith("_blastx.tsv"):
             inputblastx_path = os.path.join(outputFolder,blastxtable)
             inputblastx = pd.read_csv(inputblastx_path, sep='\t')
             break
 
-    # merge text
+    # texto principal
     inputfile["MatchSequence"] = inputfile["Species"] + " --> " + inputfile["SubjTitle"]
 
+    inputfile["Family"] = inputfile["Family"].fillna("unknownFamily")
     ################### BLASTn
     inputblast.columns = ['QuerySeq','BLASTn_Cover','BLASTn_Ident','BLASTn_evalue','BLASTn-stitle']
     inputfile = inputfile.merge(inputblast, on='QuerySeq', how='left')
@@ -55,27 +56,30 @@ def scatterPlotBLAST(outputFolder):
 
 
     inputfile["Genome.composition"] = inputfile["Genome.composition"].fillna("unknown")
-    fig = px.scatter(inputfile, x="QseqLength", y="MatchSequence", size="QCover", color="Genome.composition",
+    inputfile["Family_Info"] = inputfile["Family"] + " - " + inputfile["Genome.composition"]
+
+    fig = px.scatter(inputfile, x="QseqLength", y="MatchSequence", size="QCover", color="Family_Info",
                      hover_data=["Pident", "Evalue","QuerySeq","BLASTn","BLASTx"])
     fig.update_yaxes(showticklabels=False)
     fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title='ViewVir interactive scatter plot')
 
-    # out files
+    # Definição do nome do arquivo de saída
     pltname = os.path.join(outputFolder, "scatterPlot.html")
     plot(fig, filename=pltname, auto_open=False)
 
-    # final table
+    # Tabela de curadoria manual
     csv_output_path = os.path.join(outputFolder, "ViewVir-blasts_table.csv")
     inputfile.to_csv(csv_output_path, index=False)
 
 def scatterPlot(outputFolder):
-    
+    # Localiza o arquivo correto
     for plot_file in os.listdir(outputFolder):
         if plot_file.endswith("_nonDNA.tsv"):
             inputfile_path = os.path.join(outputFolder, plot_file)
             inputfile = pd.read_csv(inputfile_path, sep='\t')
-            break  
-   
+            break  # Processa apenas o primeiro arquivo encontrado
+
+    # Gráfico Interativo
     inputfile["MatchSequence"] = inputfile["Species"] + " --> " + inputfile["SubjTitle"]
     inputfile["Genome.composition"] = inputfile["Genome.composition"].fillna("NA")
 
@@ -84,7 +88,7 @@ def scatterPlot(outputFolder):
     fig.update_yaxes(showticklabels=False)
     fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title='ViewVir interactive scatter plot')
 
-    
+    # Definição do nome do arquivo de saída
     pltname = os.path.join(outputFolder, "scatterPlot.html")
     plot(fig, filename=pltname, auto_open=False)
 
