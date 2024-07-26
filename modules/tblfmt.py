@@ -17,7 +17,7 @@ def viralFilter(vvfolder):
         if file_path.endswith("_proc.tsv"):
             # Processando a Tabela
             # Leia o arquivo
-            file = pd.read_csv(os.path.join(vvfolder,file_path), sep="\t")
+            file = pd.read_csv(os.path.join(vvfolder,file_path), sep="\t",on_bad_lines='skip')
 
             # operação de junção
             file = pd.merge(file, allVirus, on="Species", how="left")
