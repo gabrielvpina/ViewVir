@@ -4,18 +4,11 @@ import pandas as pd
 from modules.tblfmt import viralFilter,renameFasta
 from modules.findorf import findorf
 from modules.newORF import gc1_ORFs,gc5_ORFs,gc11_ORFs
-from modules.plots import scatterPlot,scatterPlotBLAST
 from modules.IntProCD import interpro
 from modules.contigProcess import cap3,diamondTable,processDmndOut
-from modules.bokehINDEX import generate_orf_plots
 from modules.makeblast import blastn,blastx
-
-# import data
-ncbiSpecie = pd.read_csv("data/NCBI_virSpecies.csv", names=["Species", "Genome.composition"])
-ncbiNames = pd.read_csv("data/NCBI_virName.csv", names=["Species", "Genome.composition"])
-# merge tables
-allVirus = pd.concat([ncbiNames, ncbiSpecie])
-
+from modules.makePlot import scatterPlot, scatterPlotBLAST, generate_orf_plots, combine_html
+    
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-in","--input", type=str, help="Fasta with non-host contigs")
@@ -70,7 +63,7 @@ blastx_database = str(args.blastx)
 # Assembly contigs
 cap3(inputContig,vvfolder)
 
-# rename original fasta
+# Renomear arquivo fasta original
 renameFasta(vvfolder)
 
 ######################################## Processando diamond ##############################
@@ -95,13 +88,8 @@ gc11_ORFs(vvfolder,nORF)
 if interpro != "None":
     interpro(vvfolder,interpro_path,CPU)
 
-################################# PLOT SEQUENCES AND ORFS #################################
-suffixes = ['_ORFgc1.fasta', '_ORFgc5.fasta', '_ORFgc11.fasta']
-output_file = 'orf_plots.html'
 
-generate_orf_plots(vvfolder, output_file, suffixes)
-
-################################# BLAST #################################
+################################# All Plots #################################
 if blastn != "None":
     blastn(vvfolder,blastn_database,CPU)
     if blastx != "None":
@@ -110,5 +98,18 @@ if blastn != "None":
         scatterPlotBLAST(vvfolder)
     else:
         scatterPlot(vvfolder)
+
+suffixes = ['_ORFgc1.fasta', '_ORFgc5.fasta', '_ORFgc11.fasta']
+output_file = 'orf_plots.html'
+
+html_ORF_file = os.path.join(vvfolder,"orf_plots.html")
+html_Combined_file = os.path.join(vvfolder,"ViewVir.html")
+
+generate_orf_plots(vvfolder,html_ORF_file, suffixes)
+
+scatterplot_html = scatterPlotBLAST(vvfolder)
+combine_html(scatterplot_html ,html_ORF_file, html_Combined_file)
+
+
 
 os.rmdir("temp")
