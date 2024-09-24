@@ -231,7 +231,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                     strand = 1 if orf['strand'] == '+' else -1
                     color = "#ffcccc" if strand == 1 else "#ccccff"
                     
-                    label = f"{orf['contig_full']}: {orf['start']}-{orf['end']} ({orf['strand']}) Length = {orf['length']} nt <br>Codons: start {orf['start_codon']}, stop {orf['stop_codon']}"
+                    label = f"{orf['contig_full']}: {orf['start']}-{orf['end']} ({orf['strand']}), Frame ({orf['frame']}), Length = {orf['length']} nt <br>Codons: start {orf['start_codon']}, stop {orf['stop_codon']}"
 
                     # Adiciona informações CDD ao label se existirem
                     if orf['contig_full'] in cdd_data:
