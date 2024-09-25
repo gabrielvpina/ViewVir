@@ -18,7 +18,6 @@ from plotly.offline import plot
 
 
 suffixes = ['_ORFgc1.fasta', '_ORFgc5.fasta', '_ORFgc11.fasta']
-input_dir = "Centris2"
 out_html = "orf_plots.html" 
 
 
@@ -284,7 +283,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                             padding: 10px;
                             font-size: 16px;
                             margin-left: 10px;
-                            background-color: #4CAF50;
+                            background-color: #031d54;
                             color: white;
                             border: none;
                             border-radius: 4px;
@@ -306,12 +305,12 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                 <body>
                     <!-- Barra de Pesquisa -->
                     <div class="search-bar">
-                        <input type="text" id="searchInput" placeholder="Search for a contig...">
+                        <input type="text" id="searchInput" placeholder="Search for a contig..." onkeypress="handleEnter(event)">
                         <input type="submit" value="Search" onclick="searchFunction()">
                     </div>
 
                     <!-- Título menor centralizado acima da primeira contig -->
-                    <h3 id="main-title">ORFs Plot</h3>
+                    <h3 id="main-title">ORFs Info Visualization</h3>
 
                     <div class="container">
                         <div class="center">
@@ -319,9 +318,9 @@ def generate_orf_plots(input_dir, output_file, suffixes):
                         </div>
                     </div>
 
-
                     <!-- Função JavaScript para a pesquisa -->
                     <script>
+                        // Função para buscar contigs
                         function searchFunction() {{
                             var input, filter, contigs, i, txtValue;
                             input = document.getElementById('searchInput');
@@ -344,6 +343,13 @@ def generate_orf_plots(input_dir, output_file, suffixes):
 
                             if (!found) {{
                                 alert("No contig found.");
+                            }}
+                        }}
+
+                        // Função para detectar a tecla Enter na barra de pesquisa
+                        function handleEnter(event) {{
+                            if (event.keyCode === 13) {{ // Código da tecla Enter
+                                searchFunction(); // Chama a função de busca
                             }}
                         }}
                     </script>
@@ -394,7 +400,7 @@ def generate_orf_plots(input_dir, output_file, suffixes):
     print(f"Plots saved in {output_file}")
 
 
-def combine_html(scatterplot_html, orf_plots_html, output_file):
+def combine_html(scatterplot_html, orf_plots_html, output_file, image_logo):
     with open(scatterplot_html, 'r') as f:
         scatterplot_content = f.read()
         
@@ -404,22 +410,57 @@ def combine_html(scatterplot_html, orf_plots_html, output_file):
     combined_html = f"""<!DOCTYPE html>
         <html>
         <head>
-            <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+            <!-- Título da aba do navegador -->
+            <title>ViewVir - Viral Diversity Analysis</title>
+
+            <!-- Favicon (logo na aba do navegador) -->
+            <link rel="icon" href="{image_logo}" type="image/png">
+
+            <!-- Importa a fonte do Plotly -->
+            <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
             <style>
                 body {{
-                    font-family: 'Ubuntu', sans-serif;
+                    font-family: 'Open Sans', sans-serif;
                     justify-content: center;
                     display: flex;
                     flex-direction: column;
+                    margin: 0;
+                    padding: 0;
+                }}
+                .header {{
+                    background-color: #031d54; /* Fundo azul */
+                    width: 100%;
+                    padding: 20px 40px;
+                    box-sizing: border-box;
+                    display: flex;
+                    align-items: center;
+                }}
+                .logo {{
+                    width: 80px; /* Define o tamanho da logo */
+                    height: 80px;
+                    margin-right: 20px; /* Espaço entre a logo e o título */
                 }}
                 h1 {{
-                    text-align: center;
-                    margin: 20px 0;
+                    font-weight: 600; /* Peso da fonte do Plotly */
+                    color: white; /* Cor da fonte branca para contraste */
+                    margin: 0;
+                    text-align: left;
+                }}
+                h2 {{
+                    font-weight: 400; /* Subtítulo com peso menor */
+                    color: white;
+                    margin: 5px 0 0 0;
+                    font-size: 16px;
+                    text-align: left;
+                }}
+                a {{
+                    color: white; /* Cor do link no subtítulo */
+                    text-decoration: underline;
                 }}
                 .scatterplot {{
                     width: 100%;
                     height: 50vh;
-                    overflow: auto;
+                    overflow: hidden;
                 }}
                 .orf-plots {{
                     width: 100%;
@@ -430,7 +471,15 @@ def combine_html(scatterplot_html, orf_plots_html, output_file):
             </style>
         </head>
         <body>
-            <h1>ViewVir - Viral metatranscriptomics visualization</h1>
+            <!-- Cabeçalho com logo, título e subtítulo -->
+            <div class="header">
+                <img src="{image_logo}" alt="ViewVir Logo" class="logo">
+                <div>
+                    <h1>ViewVir - A pipeline for viral diversity analysis</h1>
+                    <h2>For more information, please see the documentation on GitHub: <a href="https://github.com/gabrielvpina/ViewVir" target="_blank">https://github.com/gabrielvpina/ViewVir</a></h2>
+                </div>
+            </div>
+
             <div class="scatterplot">
                 {scatterplot_content}
             </div>
@@ -446,7 +495,10 @@ def combine_html(scatterplot_html, orf_plots_html, output_file):
                 }});
             </script>
         </body>
-        </html>"""
+        </html>
+        """
+
+
 
     with open(output_file, 'w') as f:
         f.write(combined_html)
