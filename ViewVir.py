@@ -99,6 +99,8 @@ if blastn != "None":
     else:
         scatterPlot(vvfolder)
 
+
+
 suffixes = ['_ORFgc1.fasta', '_ORFgc5.fasta', '_ORFgc11.fasta']
 output_file = 'orf_plots.html'
 
@@ -106,9 +108,12 @@ html_ORF_file = os.path.join(vvfolder,"orf_plots.html")
 html_Combined_file = os.path.join(vvfolder,"ViewVir.html")
 
 generate_orf_plots(vvfolder,html_ORF_file, suffixes)
-
 scatterplot_html = scatterPlotBLAST(vvfolder)
-combine_html(scatterplot_html ,html_ORF_file, html_Combined_file)
+
+# Combine HTMLs
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(script_dir, 'data', 'roundlogo.png')
+combine_html(scatterplot_html ,html_ORF_file, html_Combined_file, image_path)
 
 
 
