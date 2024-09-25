@@ -33,14 +33,21 @@ def scatterPlotBLAST(outputFolder):
     for blasttable in os.listdir(outputFolder):
         if blasttable.endswith("_blastn.tsv"):
             inputblast_path = os.path.join(outputFolder,blasttable)
-            inputblast = pd.read_csv(inputblast_path, sep='\t')
+            try:
+                inputblast = pd.read_csv(inputblast_path, sep='\t')
+            except pd.errors.EmptyDataError:
+                inputblast = pd.DataFrame(columns=['QuerySeq', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle'])
             break
 
     # tabela vinda do BLASTx
     for blastxtable in os.listdir(outputFolder):
         if blastxtable.endswith("_blastx.tsv"):
             inputblastx_path = os.path.join(outputFolder,blastxtable)
-            inputblastx = pd.read_csv(inputblastx_path, sep='\t')
+            try:
+                inputblastx = pd.read_csv(inputblastx_path, sep='\t')
+            except pd.errors.EmptyDataError:
+                inputblastx = pd.DataFrame(columns=['QuerySeq', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle'])
+
             break
 
     # texto principal
@@ -109,7 +116,7 @@ def scatterPlot(outputFolder):
     inputfile["ID"] = inputfile["QuerySeq"].apply(lambda x: f"contig_{x}")
 
     fig = px.scatter(inputfile, x="QseqLength", y="MatchSequence", size="QCover", color="Family_Info",
-                     hover_data=["Pident", "Evalue", "QuerySeq", "BLASTn", "BLASTx"], custom_data=["ID"])
+                     hover_data=["Pident", "Evalue", "QuerySeq"], custom_data=["ID"])
 
     fig.update_yaxes(showticklabels=False)
     #fig.update_layout(yaxis={'categoryorder': 'total ascending'}, title='ViewVir interactive scatter plot', template="simple_white")
