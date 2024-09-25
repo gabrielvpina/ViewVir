@@ -483,7 +483,7 @@ def combine_html(scatterplot_html, orf_plots_html, output_file, image_logo):
                 <img src="{image_logo}" alt="ViewVir Logo" class="logo">
                 <div>
                     <h1>ViewVir - A pipeline for viral diversity analysis</h1>
-                    <h2>For more information, please see the documentation on GitHub: <a href="https://github.com/gabrielvpina/ViewVir" target="_blank">https://github.com/gabrielvpina/ViewVir</a></h2>
+                    <h2>For further information, please refer to the documentation available on GitHub: <a href="https://github.com/gabrielvpina/ViewVir" target="_blank">https://github.com/gabrielvpina/ViewVir</a></h2>
                 </div>
             </div>
 
