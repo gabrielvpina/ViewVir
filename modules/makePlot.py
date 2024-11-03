@@ -95,8 +95,14 @@ def scatterPlotBLAST(outputFolder):
     plot(fig, filename=pltname, auto_open=False)
 
     # Salva a tabela para curadoria manual
-    csv_output_path = os.path.join(outputFolder, "ViewVir-blasts_table.csv")
-    inputfile.to_csv(csv_output_path, index=False)
+    csv_output_path = os.path.join(outputFolder, f"{outputFolder}_ViewVir.csv")
+    vvTable = inputfile
+
+    # Alterando colunas
+    vvTable.drop(columns=['BLASTn', 'BLASTx'], inplace=True)
+
+    # Salvando a tabela modificada em um arquivo CSV
+    vvTable.to_csv(csv_output_path, index=False)
 
     return pltname
 
@@ -509,9 +515,6 @@ def combine_html(scatterplot_html, orf_plots_html, output_file, image_logo):
 
     with open(output_file, 'w') as f:
         f.write(combined_html)
-
-
-
 
 
 
