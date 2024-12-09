@@ -6,7 +6,7 @@ from modules.findorf import findorf
 from modules.newORF import gc1_ORFs,gc5_ORFs,gc11_ORFs
 from modules.IntProCD import interpro
 from modules.contigProcess import cap3,diamondTable,processDmndOut
-from modules.makeblast import blastn,blastx
+from modules.makeblast import blastn, blastx, diamond_blastx
 from modules.makePlot import scatterPlot, scatterPlotBLAST, generate_orf_plots, combine_html
     
 
@@ -19,6 +19,7 @@ parser.add_argument("-N","--blastn",type=str, help="BLASTn database path")
 parser.add_argument("-X","--blastx",type=str, help="BLASTx database path")
 parser.add_argument("-cpu","--cpu", type=int, help="CPU usage <int>")
 parser.add_argument("-norf","--numORFs",type=int, help="Number of biggest ORFs selected")
+parser.add_argument("-dX","--diamond_blastx",type=str, help="Diamond BLASTx database path")
 
 
 args = parser.parse_args()
@@ -58,6 +59,9 @@ blastn_database = str(args.blastn)
 # BLASTx
 blastx_database = str(args.blastx)
 
+# Diamond_BLASTx
+diamond_blastx_database = str(args.diamond_blastx)
+
 
 ######################################## Processando contigs ##############################
 # Assembly contigs
@@ -94,10 +98,12 @@ if blastn != "None":
     blastn(vvfolder,blastn_database,CPU)
     if blastx != "None":
         blastx(vvfolder,blastx_database,CPU)
-        # Scatter Plot
-        scatterPlotBLAST(vvfolder)
-    else:
-        scatterPlot(vvfolder)
+        if dimaond_blastx != "None":
+            diamond_blastx(vvfolder,diamond_blastx_database,CPU)
+            # Scatter Plot
+            scatterPlotBLAST(vvfolder)
+else:
+    scatterPlot(vvfolder)
 
 
 
