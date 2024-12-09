@@ -42,7 +42,6 @@ def diamond_blastx(outputFolder,database,cpu):
         sample = os.path.basename(nonDNA_file).replace("_nonDNA.fasta", "")
         outfile = os.path.join(outputFolder,sample)
 
-        blastx_input = f"diamond blastx --db {database} --query {infile} --threads {cpu} --outfmt 6 qcovhsp qseqid pident evalue stitle --max-target-seqs 1 --out {outfile + '_blastx.tsv'}"
+        blastx_input = f"diamond blastx --db {database} --query {infile} --threads {cpu} --outfmt 6 qseqid qcovhsp pident evalue stitle --max-target-seqs 1 --out {outfile + '_blastx.tsv'}"
 
         subprocess.run(blastx_input, check=True)
-
