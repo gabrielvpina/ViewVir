@@ -150589,6 +150589,24 @@ def findorf(vvFolder):
         for log_file in log_files:
             os.remove(log_file)
 
+    fileFasta = os.path.join(vvFolder, "*_CAP3.fasta")
+    viral_files = glob.glob(fileFasta)
+
+    for viral_file in viral_files:
+        entrada = viral_file
+        nome = os.path.basename(viral_file).replace("_CAP3.fasta", "")
+        saida = vvFolder
+
+        # Executa orfipy - genetic code 01
+        orfipy = ["orfipy","--partial-3","--partial-5","--table", "1", "--outdir", saida, entrada, "--pep", f"{nome}_all_ORFs.fasta"]
+
+        subprocess.run(orfipy, check=True)
+
+        # Remove arquivos .log
+        log_files = [os.path.join(vvFolder, file) for file in os.listdir(vvFolder) if file.endswith(".log")]
+        for log_file in log_files:
+            os.remove(log_file)
+
 
 
 def ORFs(vvFolder, numORF):
@@ -150620,6 +150638,33 @@ def ORFs(vvFolder, numORF):
     # write new fasta w/ biggest orfs
     with open(input_fasta, "w") as output_handle:
         SeqIO.write(biggest_orfs, output_handle, "fasta")
+    ###########################################################################
+    # All ORFs
+
+    for fasta in os.listdir(vvFolder):
+        if fasta.endswith("_all_ORFs.fasta"):
+            input_fasta = fasta[0]
+            input_fasta = os.path.join(vvFolder, fasta)
+
+
+    for record in SeqIO.parse(input_fasta, "fasta"):
+        header = record.description
+        contig = header.split(".")[0]  # get the first part of description
+        orfs_dict[contig].append(record)
+
+    
+    biggest_orfs = []
+
+    # process each contig
+    for contig, orfs in orfs_dict.items():
+        # sorting
+        orfs.sort(key=lambda x: len(x.seq), reverse=True)
+        # select biggest orfs
+        biggest_orfs.extend(orfs[:int(numORF)])
+
+    # write new fasta w/ biggest orfs
+    with open(input_fasta, "w") as output_handle:
+        SeqIO.write(biggest_orfs, output_handle, "fasta")
 
 
 ################
@@ -150628,11 +150673,12 @@ def ORFs(vvFolder, numORF):
 
 
 def hmmscan(vvFolder, hmmProfile, CPU):
-    orf_files = glob.glob(os.path.join(vvFolder, "*_ORFs.fasta"))
+    orf_files = glob.glob(os.path.join(vvFolder, "*_all_ORFs.fasta"))
     if not orf_files:
-        raise FileNotFoundError("No file with '_ORFs.fasta' suffix.")
+        raise FileNotFoundError("No file with '_all_ORFs.fasta' suffix.")
     
     orf_file = orf_files[0]
+    name = orf_file.replace("_ORFs.fasta", "")
     domtblout_path = orf_file.replace("_ORFs.fasta", "_hmmscan.tsv")
 
     hmmscan_run = [
@@ -150713,7 +150759,10 @@ def filter_hmmtable(vvFolder, evalue_threshold=1e-18, bitscore_threshold=50, cov
 
             df = pd.DataFrame(filtered_records, columns=columns[:len(filtered_records[0])])
 
-            df = df[["query_name","target_name","qlen","tlen","evalue_sequence","score_sequence"]]
+            sampleName = f"{name}"
+            df[Sample_name] = sampleName 
+
+            df = df[["Sample_name","query_name","target_name","qlen","tlen","evalue_sequence","score_sequence"]]
 
             # save in .csv
             name = hmm_table_file.replace("_hmmscan.tsv","")
@@ -150899,7 +150948,7 @@ def finalTable(vvFolder):
 ascii_banner = pyfiglet.figlet_format("ViralZone")
 
 usage = f"""
-{print(ascii_banner)} A tool for viral diversity analysis. More info in: https://github.com/gabrielvpina/ - 
+{print(ascii_banner)} A tool for viral diversity analysis. More info in: https://github.com/gabrielvpina/ \n
 Dependencies: CAP3; Diamond; BLAST; HMMER and ORFiPy.
 """
 
