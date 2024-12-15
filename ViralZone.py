@@ -1,4 +1,4 @@
-import os, glob, subprocess, csv, argparse, json, sys, re
+import os, glob, subprocess, csv, argparse, json, sys, re, shutil, textwrap, pyfiglet
 import pandas as pd
 from collections import defaultdict
 from Bio import SeqIO, Seq
@@ -150902,13 +150902,13 @@ def finalTable(vvFolder):
 
 ################################
 
+ascii_banner = pyfiglet.figlet_format("ViralZone")
 
-
-
-usage = """ViralZone is a pipeline that takes an assembled contig file and performs \
-            sequence analysis using viral databases and BLAST. It allows users to specify input \
-            files, output directories, and various tools to use for sequence processing. \n \
-            Dependencies: CAP3; Diamond; BLAST; HMMER."""
+usage = f"""
+{print(ascii_banner)}
+A tool for viral diversity analysis. More info in: https://github.com/gabrielvpina/
+Dependencies: CAP3; Diamond; BLAST; HMMER.
+"""
 
 parser = argparse.ArgumentParser(description=usage)
 
