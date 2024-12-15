@@ -150876,12 +150876,6 @@ def finalTable(vvFolder):
   csv_output_path = os.path.join(vvFolder, f"{name}_viralzone.csv")
   inputfile.to_csv(csv_output_path, index=False)
 
-  # Move tables
-  #mydir = "hit_tables"
-  #suffixes = ['_ViralProspect.tsv', '_blastn.tsv', '_blastx.tsv']
-  #for name in suffixes:
-    #move_table = f"mv {str(os.path.join(vvFolder, f"{name}{suffixes}"))} {str(os.path.join(vvFolder, mydir))}"
-    #subprocess.run(move_table, shell=True, check=True)
 
   mydir = "hit_tables"
   move_table1 = f"mv {os.path.normpath(inputDmnd)} {str(os.path.join(vvFolder, mydir))}"
@@ -150905,9 +150899,8 @@ def finalTable(vvFolder):
 ascii_banner = pyfiglet.figlet_format("ViralZone")
 
 usage = f"""
-{print(ascii_banner)}
-A tool for viral diversity analysis. More info in: https://github.com/gabrielvpina/
-Dependencies: CAP3; Diamond; BLAST; HMMER.
+{print(ascii_banner)} A tool for viral diversity analysis. More info in: https://github.com/gabrielvpina/ - 
+Dependencies: CAP3; Diamond; BLAST; HMMER and ORFiPy.
 """
 
 parser = argparse.ArgumentParser(description=usage)
