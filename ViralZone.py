@@ -96,7 +96,8 @@ def diamondTable(viralDB, vvFolder, CPU):
 
 
 def processDmndOut(vvFolder):
-    #os.makedirs("hit_tables")
+    os.makedirs(os.path.join(vvFolder, "hit_tables"))
+
     for table in os.listdir(vvFolder):
         if table.endswith("_diamond.tsv"):
             sample = table.replace('_diamond.tsv', '_ViralDmnd.tsv')
@@ -121,13 +122,16 @@ def processDmndOut(vvFolder):
                     out_file.write(result.stdout)
                 
                 # move original table
-                #move_table = f"mv {os.path.normpath(entrada)} hit_tables/"
-                #subprocess.run(move_table, shell=True, check=True)
+                mydir = "hit_tables"
+                move_table = f"mv {os.path.normpath(entrada)} {str(os.path.join(vvFolder, mydir))}"
+                subprocess.run(move_table, shell=True, check=True)
+
             except subprocess.CalledProcessError as e:
                 print(f"Error in process file {entrada}: {e}")
             except Exception as e:
                 print(f"Unexpected error in process file {entrada}: {e}")
 
+# Viral metadata - Family and Genome composition
 json_viral = '''
 [
  {
@@ -150515,11 +150519,17 @@ viral_metadata = pd.DataFrame(json_data)
 
 def viralFilter(vvFolder):
 
-  file_path = os.path.join(vvFolder, "*_ViralDmnd.tsv")
-  dmnd_files = glob.glob(file_path)
-  table_file = dmnd_files[0]
+  dmnd_files = glob.glob(os.path.join(vvFolder, "*_ViralDmnd.tsv"))
+  single_file = dmnd_files[0]
 
-  file = pd.read_csv(table_file, sep="\t",on_bad_lines='skip')
+  #file_path = os.path.join(vvFolder, "*_ViralDmnd.tsv")
+  #dmnd_files = glob.glob(file_path)
+
+  if not dmnd_files:
+    raise FileNotFoundError(f"No file in: {single_file}")
+
+  
+  file = pd.read_csv(single_file, sep="\t",on_bad_lines='skip')
 
   # operação de junção
   file = pd.merge(file, viral_metadata, on="Organism_Name", how="left")
@@ -150535,26 +150545,28 @@ def viralFilter(vvFolder):
   # Remover duplicatas
   file = file.drop_duplicates()
   # Obter o nome base do arquivo de entrada
-  inputBasename = os.path.basename(table_file)
+  inputBasename = os.path.basename(single_file)
   # Caminho do arquivo de saída
   reduc_name = inputBasename.replace("_ViralDmnd.tsv", "")
   output_file = os.path.join(vvFolder, f"{reduc_name}_ViralProspect.tsv")
     
   # Escreva os dados em um arquivo de saída dentro do diretório criado  
   file.to_csv(output_file, sep="\t", index=False)
-            
-  arquivo_PRE = file[["QueryID", "FullQueryLength"]]
-  arquivo_PRE.to_csv(output_file, sep="\t", index=False)
 
-  # Processar _pre.tsv para gerar RNA-virus.fasta
-  samp = os.path.basename(output_file).replace("_ViralProspect.tsv", "")
-  with open(output_file, "r") as infile, open(f"{vvFolder}/{samp}_ViralProspect.fasta", "w") as outfile:
+  # Create fasta viral file
+  output_pre = os.path.join(vvFolder, f"{reduc_name}_pre.tsv")
+  arquivo_PRE = file[["QueryID", "FullQueryLength"]]
+  arquivo_PRE.to_csv(output_pre, sep="\t", index=False)
+
+  samp = os.path.basename(output_pre).replace("_pre.tsv", "")
+  with open(output_pre, "r") as infile, open(f"{vvFolder}/{samp}_ViralProspect.fasta", "w") as outfile:
     lines = infile.readlines()
     for line in lines[1:]:  # Ignorar a primeira linha
       line = line.strip().replace('\t', '\n')
       outfile.write(f">{line}\n")
     
-  os.remove(output_file)
+  os.remove(output_pre)
+  os.remove(single_file)
 
 
 def findorf(vvFolder):
@@ -150718,6 +150730,8 @@ def filter_hmmtable(vvFolder, evalue_threshold=1e-18, bitscore_threshold=50, cov
         print(f"Arquivo HMM não encontrado no caminho: {hmm_table_file}")
         return None
 
+  
+
 
 
 
@@ -150769,64 +150783,89 @@ def diamond_blastx(vvFolder, database, CPU):
 
         # Dblastx_input = f"diamond blastx --db {database} --query {infile} --threads {CPU} --outfmt 6 qseqid qcovhsp pident evalue stitle --max-target-seqs 1 --out {outfile + '_blastx.tsv'}"
 
-        Dblastx_input = ["diamond","blastx","--db", database,"--query", infile, "--threads", str(CPU),
-        "--outfmt","6 qseqid qcovhsp pident evalue stitle", "--max-target-seqs", "1", "--out", f"{outfile}_blastx.tsv"]
-        qseqid sseqid qlen slen pident evalue qcovhsp stitle
+        #Dblastx_input = ["diamond","blastx","--db", database,"--query", infile, "--threads", str(CPU),
+        #"--outfmt","6 qseqid qcovhsp pident evalue stitle", "--max-target-seqs", "1", "--out", f"{outfile}_blastx.tsv"]
+        # qseqid sseqid qlen slen pident evalue qcovhsp stitle
+
+        Dblastx_input = [
+        "diamond", "blastx",
+        "--db", database,
+        "--query", infile,
+        "--threads", str(CPU),
+        "--outfmt", "6", "qseqid", "qcovhsp", "pident", "evalue", "stitle",
+        "--max-target-seqs", "1",
+        "--out", f"{outfile}_blastx.tsv"
+        ]
 
         print("##### Diamond BLASTx started!")
-        subprocess.run(Dblastx_input, check=True)
+        subprocess.run(Dblastx_input, check=True, capture_output=True, text=True)
         
 
 
 # Final table
 def finalTable(vvFolder):
+  tables = glob.glob(os.path.join(vvFolder, "*_CAP3.fasta"))
+  first_name = tables[0]
+  name = os.path.basename(first_name).replace("_CAP3.fasta","")
 
-    # Diamond Prospect table
-    inputDmnd = os.path.join(vvFolder, "*_ViralProspect.tsv")
-    inputfile = pd.read_csv(inputDmnd, sep='\t')
-    name = os.path.basename(inputDmnd).replace("_ViralProspect.fasta", "")
+  # Diamond Prospect table
+  inputDmnd = os.path.join(vvFolder, f"{name}_ViralProspect.tsv")
+  inputfile = pd.read_csv(inputDmnd, sep='\t')
+  #name = os.path.basename(inputDmnd).replace("_ViralProspect.fasta", "")
 
-    ## table BLASTn
+  ## table BLASTn
     
-    BlastnTable = os.path.join(vvFolder, "*_blastn.tsv")
-    if os.path.exists(BlastnTable):
-      inputblastn = pd.read_csv(BlastnTable, sep='\t')
+  BlastnTable = os.path.join(vvFolder, f"{name}_blastn.tsv")
+  if os.path.exists(BlastnTable):
+    inputblastn = pd.read_csv(BlastnTable, sep='\t')
 
 
-    ## table BLASTx
-    BlastxTable = os.path.join(vvFolder, "*_blastx.tsv")
-    if os.path.exists(BlastxTable):
-      inputblastx = pd.read_csv(BlastxTable, sep='\t')
+  ## table BLASTx
+  BlastxTable = os.path.join(vvFolder, f"{name}_blastx.tsv")
+  if os.path.exists(BlastxTable):
+    inputblastx = pd.read_csv(BlastxTable, sep='\t')
 
-    ## table HMM 
-    hmmTable = os.path.join(vvFolder, "*_hmm.tsv")
-    if os.path.exists(hmmTable):
-      inputHMM = pd.read_csv(hmmTable, sep='\t')
+  ## table HMM 
+  #hmmTable = os.path.join(vvFolder, "{name}_hmm.tsv")
+  #if os.path.exists(hmmTable):
+    #inputHMM = pd.read_csv(hmmTable, sep='\t')
 
-    # Making final table
-    inputfile["Family"] = inputfile["Family"].fillna("unknownFamily")
+  # Making final table
+  inputfile["Family"] = inputfile["Family"].fillna("unknownFamily")
 
-    ## Merge prospect table w/ blastn table
-    if os.path.exists(BlastnTable):
-      inputblastn.columns = ['QueryID','BLASTn_Cover','BLASTn_Ident','BLASTn_evalue','BLASTn-stitle']
-      inputfile = inputfile.merge(inputblastn, on='QueryID', how='left')
-      inputfile["BLASTn-stitle"] = inputfile["BLASTn-stitle"].fillna("no_hits")
+  ## Merge prospect table w/ blastn table
+  if os.path.exists(BlastnTable):
+    inputblastn.columns = ['QueryID','BLASTn_Cover','BLASTn_Ident','BLASTn_evalue','BLASTn-stitle']
+    inputfile = inputfile.merge(inputblastn, on='QueryID', how='left')
+    inputfile["BLASTn-stitle"] = inputfile["BLASTn-stitle"].fillna("no_hits")
 
-    ## Merge prospect table w/ blastx table
-    if os.path.exists(BlastxTable):
-      inputblastx.columns = ['QueryID','BLASTx_Cover','BLASTx_Ident','BLASTx_evalue','BLASTx-stitle']
-      inputfile = inputfile.merge(inputblastx, on='QueryID', how='left')
-      inputfile["BLASTx-stitle"] = inputfile["BLASTx-stitle"].fillna("no_hits")
+  ## Merge prospect table w/ blastx table
+  if os.path.exists(BlastxTable):
+    inputblastx.columns = ['QueryID','BLASTx_Cover','BLASTx_Ident','BLASTx_evalue','BLASTx-stitle']
+    inputfile = inputfile.merge(inputblastx, on='QueryID', how='left')
+    inputfile["BLASTx-stitle"] = inputfile["BLASTx-stitle"].fillna("no_hits")
 
-    ## Merge prospect table w/ hmm table
-    if os.path.exists(hmmTable):
-      inputHmm.columns = ['QueryID','HMM-stitle','HMM-qlen','HMM-tlen','HMM-evalue','HMM-score']
-      inputfile = inputfile.merge(inputHMM, on='QueryID', how='left')
-      inputfile["HMM-stitle"] = inputfile["HMM-stitle"].fillna("no_hits")
+  # Final table
+  csv_output_path = os.path.join(vvFolder, f"{name}_viralzone.csv")
+  inputfile.to_csv(csv_output_path, index=False)
 
-    # Final table
-    csv_output_path = os.path.join(vvFolder, f"{name}_viralzone.csv")
-    inputfile.to_csv(csv_output_path, index=False)
+  # Move tables
+  #mydir = "hit_tables"
+  #suffixes = ['_ViralProspect.tsv', '_blastn.tsv', '_blastx.tsv']
+  #for name in suffixes:
+    #move_table = f"mv {str(os.path.join(vvFolder, f"{name}{suffixes}"))} {str(os.path.join(vvFolder, mydir))}"
+    #subprocess.run(move_table, shell=True, check=True)
+
+  mydir = "hit_tables"
+  move_table1 = f"mv {os.path.normpath(inputDmnd)} {str(os.path.join(vvFolder, mydir))}"
+  subprocess.run(move_table1, shell=True, check=True)
+  move_table2 = f"mv {os.path.normpath(BlastnTable)} {str(os.path.join(vvFolder, mydir))}"
+  subprocess.run(move_table2, shell=True, check=True)
+  move_table3 = f"mv {os.path.normpath(BlastxTable)} {str(os.path.join(vvFolder, mydir))}"
+  subprocess.run(move_table3, shell=True, check=True)
+  
+
+
 
 
 
@@ -150867,14 +150906,14 @@ parser.add_argument("-X", "--blastx", type=str,
 parser.add_argument("-dX", "--diamond_blastx", type=str, dest="diamond_blastx",
                     help="Path to the Diamond BLASTx database for protein sequence comparison.")
 
+parser.add_argument("-H", "--hmmscan", type=str, dest="hmmscan",
+                    help="Path to the hmmscan model for conserved domain analysis.")
+
 parser.add_argument("-norf", "--numORFs", type=int, dest="numORFs",
                     help="Number of largest ORFs to select from the input sequences.", default=2)
 
 parser.add_argument("-cpu", "--cpu", type=int, dest="cpu",
                     help="Number of CPU cores to be used for computation.", default=1)
-
-parser.add_argument("-o", "--outfile", nargs="?", type=argparse.FileType("w"), 
-                    default=sys.stdout, help="Output file (default: stdout).")
 
 parser.add_argument("-v", "--version", action="version", 
                     version="ViralZone v1.0 ({}) By: {}".format(__date__, __author__))
@@ -150906,7 +150945,6 @@ if args.blastx:
     print(f"BLASTx database: {args.blastx}")
 if args.diamond_blastx:
     print(f"Diamond BLASTx database: {args.diamond_blastx}")
-print(f"Output file: {args.outfile.name if args.outfile != sys.stdout else 'stdout'}")
 
 
 ####################################
@@ -150931,6 +150969,9 @@ viralFilter(args.outdir)
 ### ORFs profile
 findorf(args.outdir)
 ORFs(args.outdir, args.numORFs)
+
+if args.hmmscan:
+  hmmscan(args.outdir, args.hmmscan, args.cpu)
 
 ### BLAST
 if args.blastn:
