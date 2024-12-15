@@ -1,4 +1,4 @@
-import os, glob, subprocess, csv, argparse, json, sys
+import os, glob, subprocess, csv, argparse, json, sys, re
 import pandas as pd
 from collections import defaultdict
 from Bio import SeqIO, Seq
@@ -150801,6 +150801,16 @@ def diamond_blastx(vvFolder, database, CPU):
         subprocess.run(Dblastx_input, check=True, capture_output=True, text=True)
         
 
+# Função para extrair o nome da espécie
+def extract_organism_name(stitle):
+    if stitle == "no_hits":
+        return ""
+    match = re.search(r'\[([^\]]+)\]', stitle)  # Captura texto dentro dos colchetes
+    if match:
+        return match.group(1)  # Retorna o nome da espécie
+    return ""  # Retorna vazio caso não haja nome da espécie
+
+
 
 # Final table
 def finalTable(vvFolder):
@@ -150825,27 +150835,44 @@ def finalTable(vvFolder):
   if os.path.exists(BlastxTable):
     inputblastx = pd.read_csv(BlastxTable, sep='\t')
 
-  ## table HMM 
-  #hmmTable = os.path.join(vvFolder, "{name}_hmm.tsv")
-  #if os.path.exists(hmmTable):
-    #inputHMM = pd.read_csv(hmmTable, sep='\t')
 
   # Making final table
   inputfile["Family"] = inputfile["Family"].fillna("unknownFamily")
 
   ## Merge prospect table w/ blastn table
   if os.path.exists(BlastnTable):
-    inputblastn.columns = ['QueryID','BLASTn_Cover','BLASTn_Ident','BLASTn_evalue','BLASTn-stitle']
+    inputblastn.columns = ['QueryID','BLASTn_Cover','BLASTn_Ident','BLASTn_evalue','BLASTn_stitle']
     inputfile = inputfile.merge(inputblastn, on='QueryID', how='left')
-    inputfile["BLASTn-stitle"] = inputfile["BLASTn-stitle"].fillna("no_hits")
+    inputfile["BLASTn_stitle"] = inputfile["BLASTn_stitle"].fillna("no_hits")
 
   ## Merge prospect table w/ blastx table
-  if os.path.exists(BlastxTable):
-    inputblastx.columns = ['QueryID','BLASTx_Cover','BLASTx_Ident','BLASTx_evalue','BLASTx-stitle']
-    inputfile = inputfile.merge(inputblastx, on='QueryID', how='left')
-    inputfile["BLASTx-stitle"] = inputfile["BLASTx-stitle"].fillna("no_hits")
+  #if os.path.exists(BlastxTable):
+    #inputblastx.columns = ['QueryID','BLASTx_Cover','BLASTx_Ident','BLASTx_evalue','BLASTx-stitle']
+    #inputfile = inputfile.merge(inputblastx, on='QueryID', how='left')
+    #inputfile["BLASTx-stitle"] = inputfile["BLASTx-stitle"].fillna("no_hits")
 
-  # Final table
+  if os.path.exists(BlastxTable):
+    inputblastx.columns = ['QueryID','BLASTx_Cover','BLASTx_Ident','BLASTx_evalue','BLASTx_stitle']
+    inputblastx['Organism_Name'] = inputblastx['BLASTx_stitle'].apply(extract_organism_name)
+    inputblastx = pd.merge(inputblastx, viral_metadata, on="Organism_Name", how="left")
+    inputblastx.columns = ['QueryID','BLASTx_Cover','BLASTx_Ident','BLASTx_evalue','BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family','BLASTx_GenomeComposition']
+    inputfile = inputfile.merge(inputblastx, on='QueryID', how='left')
+    inputfile["BLASTx_stitle"] = inputfile["BLASTx_stitle"].fillna("no_hits")\
+
+    # Final table
+  # QueryID	SubjectID	QseqLength	SseqLength	Pident	Evalue	QCover	SubjTitle	Organism_Name	Family	Genome.composition	FullQueryLength	BLASTn_Cover	BLASTn_Ident	BLASTn_evalue	BLASTn-stitle	BLASTx_Cover	BLASTx_Ident	BLASTx_evalue	BLASTx-stitle	BLASTx_Organism_Name	BLASTx_Family	BLASTx_GenomeComposition
+
+  # Insert sample name column
+  sample_name = f"{name}"
+  inputfile['Sample_name'] = sample_name
+
+  # Order cols
+  inputfile = inputfile[['Sample_name', 'QueryID', 'SubjectID', 'QseqLength', 'SseqLength', 'Pident', 'Evalue', 'QCover', 'SubjTitle', 'Organism_Name', 'Family', 'Genome.composition', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family', 'BLASTx_GenomeComposition', 'FullQueryLength']]
+
+
+  inputfile.columns = ['Sample_name', 'Diamond_QueryID', 'Diamond_SubjectID', 'Diamond_QseqLength', 'Diamond_SseqLength', 'Diamond_Pident', 'Diamond_Evalue', 'Diamond_QCover', 'Diamond_SubjTitle', 'Diamond_Organism_Name', 'Diamond_Family', 'Diamond_GenomeComposition', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family', 'BLASTx_GenomeComposition', 'FullQueryLength']
+
+
   csv_output_path = os.path.join(vvFolder, f"{name}_viralzone.csv")
   inputfile.to_csv(csv_output_path, index=False)
 
@@ -150863,9 +150890,6 @@ def finalTable(vvFolder):
   subprocess.run(move_table2, shell=True, check=True)
   move_table3 = f"mv {os.path.normpath(BlastxTable)} {str(os.path.join(vvFolder, mydir))}"
   subprocess.run(move_table3, shell=True, check=True)
-  
-
-
 
 
 
