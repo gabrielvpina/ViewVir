@@ -151043,34 +151043,38 @@ if args.blastx and args.diamond_blastx:
 
 ####################################
 
-### Processing FASTA
-cap3(args.input, args.outdir)
-renameFasta(args.outdir)
+def viralzone():
 
-### Diamond ViralDB
-diamondTable(args.viralDB, args.outdir, args.cpu)
-processDmndOut(args.outdir)
-viralFilter(args.outdir)
+  ### Processing FASTA
+  cap3(args.input, args.outdir)
+  renameFasta(args.outdir)
 
-### ORFs profile
-findorf(args.outdir)
-ORFs(args.outdir, args.numORFs)
+  ### Diamond ViralDB
+  diamondTable(args.viralDB, args.outdir, args.cpu)
+  processDmndOut(args.outdir)
+  viralFilter(args.outdir)
 
-if args.hmmscan:
-  hmmscan(args.outdir, args.hmmscan, args.cpu)
-  filter_hmmtable(args.outdir, evalue_threshold=0.1, bitscore_threshold=10, coverage_threshold=0.30)
+  ### ORFs profile
+  findorf(args.outdir)
+  ORFs(args.outdir, args.numORFs)
 
-### BLAST
-if args.blastn:
-  blastn(args.outdir, args.blastn, args.cpu)
+  if args.hmmscan:
+    hmmscan(args.outdir, args.hmmscan, args.cpu)
+    filter_hmmtable(args.outdir, evalue_threshold=0.1, bitscore_threshold=10, coverage_threshold=0.30)
 
-if args.blastx:
-  blastx(args.outdir, args.blastx, args.cpu)
+  ### BLAST
+  if args.blastn:
+    blastn(args.outdir, args.blastn, args.cpu)
 
-elif args.diamond_blastx:
-  diamond_blastx(args.outdir, args.diamond_blastx, args.cpu)
+  if args.blastx:
+    blastx(args.outdir, args.blastx, args.cpu)
 
-### Final table
-finalTable(args.outdir)
+  elif args.diamond_blastx:
+    diamond_blastx(args.outdir, args.diamond_blastx, args.cpu)
 
-    
+  ### Final table
+  finalTable(args.outdir)
+
+if __name__ == "__main__":
+    viralzone()
+
