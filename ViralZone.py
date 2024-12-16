@@ -150712,7 +150712,7 @@ def filter_hmmtable(vvFolder, evalue_threshold=1e-18, bitscore_threshold=50, cov
     # Encontra o arquivo de entrada com o padrão *_hmmscan.tsv
     hmm_files = glob.glob(os.path.join(vvFolder, "*_hmmscan.tsv"))
     if not hmm_files:
-        raise FileNotFoundError("No file with '_ORFs.fasta' suffix.")
+        raise FileNotFoundError("No file with '_hmmscan.tsv' suffix.")
 
     hmm_table_file = hmm_files[0]
     #hmm_table_file = os.path.join(vvFolder, "*_hmmscan.tsv")
@@ -150758,20 +150758,20 @@ def filter_hmmtable(vvFolder, evalue_threshold=1e-18, bitscore_threshold=50, cov
             ]
 
             df = pd.DataFrame(filtered_records, columns=columns[:len(filtered_records[0])])
-
+            name = os.path.basename(hmm_table_file).replace("_hmmscan.tsv","")
             sampleName = f"{name}"
-            df[Sample_name] = sampleName 
+            df['Sample_name'] = sampleName 
 
             df = df[["Sample_name","query_name","target_name","qlen","tlen","evalue_sequence","score_sequence"]]
 
             # save in .csv
-            name = hmm_table_file.replace("_hmmscan.tsv","")
+            # name = hmm_table_file.replace("_hmmscan.tsv","")
             csv_output_path = os.path.join(vvFolder, f"{name}_hmm.csv")
             df.to_csv(csv_output_path, index=False)
 
             os.remove(hmm_table_file)
 
-            return csv_output_path
+            # return csv_output_path
         else:
             print("Nenhum registro passou pelos filtros.")
             return None
@@ -151058,6 +151058,7 @@ ORFs(args.outdir, args.numORFs)
 
 if args.hmmscan:
   hmmscan(args.outdir, args.hmmscan, args.cpu)
+  filter_hmmtable(args.outdir, evalue_threshold=0.1, bitscore_threshold=10, coverage_threshold=0.30)
 
 ### BLAST
 if args.blastn:
