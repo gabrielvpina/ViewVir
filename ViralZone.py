@@ -150873,23 +150873,28 @@ def finalTable(vvFolder):
   #name = os.path.basename(inputDmnd).replace("_ViralProspect.fasta", "")
 
   ## table BLASTn
-    
   BlastnTable = os.path.join(vvFolder, f"{name}_blastn.tsv")
-  if os.path.exists(BlastnTable):
+  # Verifica se o arquivo existe e se não está vazio
+  if os.path.exists(BlastnTable) and os.path.getsize(BlastnTable) != 0:
     inputblastn = pd.read_csv(BlastnTable, sep='\t')
+  else:
+    print(f"The file {BlastnTable} doesn't exist or is empty.")
 
 
   ## table BLASTx
   BlastxTable = os.path.join(vvFolder, f"{name}_blastx.tsv")
-  if os.path.exists(BlastxTable):
+  # Verifica se o arquivo existe e se não está vazio
+  if os.path.exists(BlastxTable) and os.path.getsize(BlastxTable) != 0:
     inputblastx = pd.read_csv(BlastxTable, sep='\t')
+  else:
+    print(f"The file {BlastxTable} doesn't exist or is empty.")
 
 
   # Making final table
   inputfile["Family"] = inputfile["Family"].fillna("unknownFamily")
 
   ## Merge prospect table w/ blastn table
-  if os.path.exists(BlastnTable):
+  if os.path.exists(BlastnTable) and os.path.getsize(BlastnTable) != 0:
     inputblastn.columns = ['QueryID','BLASTn_Cover','BLASTn_Ident','BLASTn_evalue','BLASTn_stitle']
     inputfile = inputfile.merge(inputblastn, on='QueryID', how='left')
     inputfile["BLASTn_stitle"] = inputfile["BLASTn_stitle"].fillna("no_hits")
@@ -150900,7 +150905,7 @@ def finalTable(vvFolder):
     #inputfile = inputfile.merge(inputblastx, on='QueryID', how='left')
     #inputfile["BLASTx-stitle"] = inputfile["BLASTx-stitle"].fillna("no_hits")
 
-  if os.path.exists(BlastxTable):
+  if os.path.exists(BlastxTable) and os.path.getsize(BlastxTable) != 0:
     inputblastx.columns = ['QueryID','BLASTx_Cover','BLASTx_Ident','BLASTx_evalue','BLASTx_stitle']
     inputblastx['Organism_Name'] = inputblastx['BLASTx_stitle'].apply(extract_organism_name)
     inputblastx = pd.merge(inputblastx, viral_metadata, on="Organism_Name", how="left")
@@ -150915,15 +150920,30 @@ def finalTable(vvFolder):
   sample_name = f"{name}"
   inputfile['Sample_name'] = sample_name
 
-  # Order cols
-  inputfile = inputfile[['Sample_name', 'QueryID', 'SubjectID', 'QseqLength', 'SseqLength', 'Pident', 'Evalue', 'QCover', 'SubjTitle', 'Organism_Name', 'Family', 'Genome.composition', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family', 'BLASTx_GenomeComposition', 'FullQueryLength']]
+  # Order cols by 
+  if os.path.getsize(BlastxTable) != 0 and os.path.getsize(BlastnTable) != 0:
+    inputfile = inputfile[['Sample_name', 'QueryID', 'SubjectID', 'QseqLength', 'SseqLength', 'Pident', 'Evalue', 'QCover', 'SubjTitle', 'Organism_Name', 'Family', 'Genome.composition', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family', 'BLASTx_GenomeComposition', 'FullQueryLength']]
 
+    inputfile.columns = ['Sample_name', 'Diamond_QueryID', 'Diamond_SubjectID', 'Diamond_QseqLength', 'Diamond_SseqLength', 'Diamond_Pident', 'Diamond_Evalue', 'Diamond_QCover', 'Diamond_SubjTitle', 'Diamond_Organism_Name', 'Diamond_Family', 'Diamond_GenomeComposition', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family', 'BLASTx_GenomeComposition', 'FullQueryLength']
 
-  inputfile.columns = ['Sample_name', 'Diamond_QueryID', 'Diamond_SubjectID', 'Diamond_QseqLength', 'Diamond_SseqLength', 'Diamond_Pident', 'Diamond_Evalue', 'Diamond_QCover', 'Diamond_SubjTitle', 'Diamond_Organism_Name', 'Diamond_Family', 'Diamond_GenomeComposition', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family', 'BLASTx_GenomeComposition', 'FullQueryLength']
+    csv_output_path = os.path.join(vvFolder, f"{name}_viralzone.csv")
+    inputfile.to_csv(csv_output_path, index=False)
 
+  if os.path.getsize(BlastxTable) != 0 and os.path.getsize(BlastnTable) == 0:
+    inputfile = inputfile[['Sample_name', 'QueryID', 'SubjectID', 'QseqLength', 'SseqLength', 'Pident', 'Evalue', 'QCover', 'SubjTitle', 'Organism_Name', 'Family', 'Genome.composition', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family', 'BLASTx_GenomeComposition', 'FullQueryLength']]
 
-  csv_output_path = os.path.join(vvFolder, f"{name}_viralzone.csv")
-  inputfile.to_csv(csv_output_path, index=False)
+    inputfile.columns = ['Sample_name', 'Diamond_QueryID', 'Diamond_SubjectID', 'Diamond_QseqLength', 'Diamond_SseqLength', 'Diamond_Pident', 'Diamond_Evalue', 'Diamond_QCover', 'Diamond_SubjTitle', 'Diamond_Organism_Name', 'Diamond_Family', 'Diamond_GenomeComposition', 'BLASTx_Cover', 'BLASTx_Ident', 'BLASTx_evalue', 'BLASTx_stitle', 'BLASTx_Organism_Name', 'BLASTx_Family', 'BLASTx_GenomeComposition', 'FullQueryLength']
+
+    csv_output_path = os.path.join(vvFolder, f"{name}_viralzone.csv")
+    inputfile.to_csv(csv_output_path, index=False)
+
+  if os.path.getsize(BlastxTable) == 0 and os.path.getsize(BlastnTable) != 0:
+    inputfile = inputfile[['Sample_name', 'QueryID', 'SubjectID', 'QseqLength', 'SseqLength', 'Pident', 'Evalue', 'QCover', 'SubjTitle', 'Organism_Name', 'Family', 'Genome.composition', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle','FullQueryLength']]
+
+    inputfile.columns = ['Sample_name', 'Diamond_QueryID', 'Diamond_SubjectID', 'Diamond_QseqLength', 'Diamond_SseqLength', 'Diamond_Pident', 'Diamond_Evalue', 'Diamond_QCover', 'Diamond_SubjTitle', 'Diamond_Organism_Name', 'Diamond_Family', 'Diamond_GenomeComposition', 'BLASTn_Cover', 'BLASTn_Ident', 'BLASTn_evalue', 'BLASTn_stitle','FullQueryLength']
+
+    csv_output_path = os.path.join(vvFolder, f"{name}_viralzone.csv")
+    inputfile.to_csv(csv_output_path, index=False)
 
 
   mydir = "hit_tables"
